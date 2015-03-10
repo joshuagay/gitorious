@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+  <display-name>Example</display-name>
+
+  <!-- Declare the existence of a servlet. -->
+  <servlet>
+    <servlet-name>GitoriousServlet</servlet-name>
+    <servlet-class>org.gitorious.http.GitoriousServlet</servlet-class>
+    <init-param>
+      <param-name>base-path</param-name>
+      <param-value>/tmp/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>export-all</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>repository_root</param-name>
+      <param-value>/opt/gitorious/repositories/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>permission_base_uri</param-name>
+      <param-value>http://gitorious.here:3000/</param-value>
+    </init-param>
+  </servlet>
+
+  <!-- Map URLs to that servlet. -->
+  <servlet-mapping>
+    <servlet-name>GitoriousServlet</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+</web-app>

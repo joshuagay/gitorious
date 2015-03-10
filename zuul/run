@@ -1,0 +1,3 @@
+#!/bin/sh
+ZUUL_HOME=`dirname $0`
+env GITORIOUS_HOME=$1 BUNDLE_GEMFILE=$1/Gemfile bundle exec rackup -I$ZUUL_HOME/lib

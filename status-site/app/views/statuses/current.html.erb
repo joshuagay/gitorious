@@ -1,0 +1,9 @@
+<% @page_title = @status.title %>
+<div id="status">
+  <div class="status"><span class="<%= @status.status_text.downcase %>"><%= @status.status_text %></span></div>
+  <h1><%= "<span>#{@created_at}</span>".html_safe if !@status.ok? %><%= @status.title %></h1>
+  <%= "<p>#{@status.body}</p>".html_safe unless @status.body.blank? %>
+  <% unless @problem.nil? %>
+    <p id="problem">Up since <%= @created_at %> (<%= @problem.title %>)</p>
+  <% end %>
+</div>

@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+$: << File.expand_path("../../../lib", __FILE__)
+require "gitorious/configuration_loader"
+
+loader = Gitorious::ConfigurationLoader.new
+loader.configure_application!(ENV["RAILS_ENV"] || "production")
+
+hook_path = Gitorious::Configuration.get("custom_post_receive_hook")
+
+if hook_path
+  # exec "ssh host-ip bash -c 'cd #{Dir.pwd} && #{hook_path}'"
+end

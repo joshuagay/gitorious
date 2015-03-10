@@ -1,0 +1,30 @@
+<%
+#--
+#   Copyright (C) 2012-2013 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+<%= simple_form_for user, :url => user_update_password_path, :html => { :class => 'form-horizontal change-password' } do |f| -%>
+  <fieldset>
+    <% unless user.is_openid_only? %>
+      <%= f.input :current_password, :label => t(:current_password, :scope => 'activerecord.attributes.user') %>
+    <% end %>
+    <%= f.input :password, :label => t("views.users.new_passwd") %>
+    <%= f.input :password_confirmation, :label => t("views.users.new_passwd_conf") %>
+  </fieldset>
+  <div class="form-actions">
+    <%= f.submit t("views.users.chg_passwd_action"), :class => 'btn btn-primary' %>
+  </div>
+<% end %>

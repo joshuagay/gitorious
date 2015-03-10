@@ -1,0 +1,42 @@
+<%
+  #--
+  #   Copyright (C) 2011-2013 Gitorious AS
+  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<% content_for(:head) do %>
+  <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url, :title => atom_auto_discovery_title) -%>
+<% end %>
+
+<%= site_header do %>
+  <%= render "users/show/user_profile", :user => user %>
+<% end %>
+
+<div class="container">
+  <div class="row-fluid">
+    <div class="span7">
+      <div class="content-container">
+        <%= render "users/show/activities", :atom_auto_discovery_url => atom_auto_discovery_url, :events => events %>
+      </div>
+    </div>
+    <div class="span5">
+      <%= render "users/show/projects", :user => user, :projects => projects, :favorites => favorites %>
+      <%= render "users/show/repositories", :user => user, :repositories => repositories %>
+      <%= render "users/show/teams", :user => user, :teams => teams unless teams.blank? %>
+    </div>
+  </div>
+</div>

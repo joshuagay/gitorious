@@ -1,0 +1,48 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+%>
+
+<% @title = group.name %>
+<%= render('header', :active => true, :title => @title, :group => group) %>
+
+<div class="container">
+  <div class="row-fluid">
+    <div class="span8">
+      <%= render 'events/events', :events => events %>
+    </div>
+    <div class="span4">
+      <%= render("groups/show/memberships", :group => group, :memberships => memberships) %>
+      <%= render("projects/projects", {
+            :projects => projects,
+            :hint => "This team does not yet have any projects.",
+            :heading => "Projects"
+          }) %>
+      <%= render("repositories/repositories", {
+            :repositories => mainlines,
+            :hint => "This team does not yet have any repositories.",
+            :heading => "Repositories"
+          }) %>
+      <%= render("repositories/repositories", {
+            :repositories => clones,
+            :hint => "This team does not yet have any repository clones.",
+            :heading => "Clones"
+          }) %>
+    </div>
+  </div>
+</div>

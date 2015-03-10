@@ -1,0 +1,7 @@
+<%= gts_form_for([project, :issue, label]) do |f| %>
+  <%= f.input :name %>
+  <%= f.input :color, :input_html => { :class => 'gts-color-picker' } %>
+  <%= f.actions do %>
+    <%= f.submit_button %>
+  <% end %>
+<% end %>

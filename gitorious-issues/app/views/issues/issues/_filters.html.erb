@@ -1,0 +1,16 @@
+<% if controller_name == 'queries' %>
+  <% title = "Query: #{query.name}" %>
+<% else %>
+  <% title = 'Filters' %>
+<% end %>
+
+<%= pull_box title, :id => 'issue-filters', :opened => query.active?, :class => query.active? ? 'active-issue-query' : nil do %>
+  <div class="btn-group pull-box-header-buttons">
+    <%= link_to '#', 'data-gts-toggle' => '#issue-filters-content', 'data-gts-toggle-type' => 'pullbox', :class => 'btn' do %>
+      <span class="caret"></span>
+    <% end %>
+  </div>
+  <div class="gts-content" id="issue-filters-content">
+    <%= render "issues/issues/filters/form", :query => query %>
+  </div>
+<% end %>

@@ -1,0 +1,47 @@
+<div id="gts-pjax-container">
+  <div class="pull-right">
+    <%= link_to 'Add new', [:new, project, :issue], :class => 'btn btn-primary pull-right' %>
+  </div>
+  <h2 class="gts-legend">
+    <%= project.title %>'s issues
+  </h2>
+  <div class="row-fluid">
+    <div class="span3">
+      <% if logged_in? %>
+        <%= render 'issues/issues/filters/saved_queries', :queries => private_queries, :title => 'Your queries', :id => 'private' %>
+        <hr/>
+      <% end %>
+      <%= render 'issues/issues/filters/saved_queries', :queries => public_queries, :title => 'Public queries', :id => 'public' %>
+      <hr/>
+      <% if admin?(current_user, project) %>
+        <span class="dropdown">
+          <a href="#" class="dropdown-toggle btn gts-issues-settings-dropdown" data-toggle="dropdown">
+            Settings
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li class="gts-pjax">
+              <%= link_to 'Manage labels', project_issue_labels_path(project) %>
+            </li>
+            <li class="gts-pjax">
+              <%= link_to 'Manage milestones', project_issue_milestones_path(project) %>
+            </li>
+          </ul>
+        </span>
+      <% end %>
+    </div>
+    <div class="span9">
+      <%= render "issues/issues/filters", :query => query %>
+      <div class="gts-well">
+        <h4>
+          <%= t('issues.index_results', :count => issues.size) %>
+        </h4>
+      </div>
+      <ul class="gts-project-issues">
+        <% issues.each do |issue| %>
+          <%= render 'issues/issues/issue', :issue => issue.renderer(self) %>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>

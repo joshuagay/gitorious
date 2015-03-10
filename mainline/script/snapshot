@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+# Keeping this alias in script/ to avoid breaking older installations
+# still depending on script/snapshot for scheduled backups
+
+tarball_path = ARGV[0]
+exec "./bin/snapshot #{tarball_path} "

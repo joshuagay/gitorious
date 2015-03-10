@@ -1,0 +1,12 @@
+{
+    "id": "http://api.gitorious.org/schema/team#",
+    "$schema": "http://json-schema.org/schema#",
+    "title": "Team",
+    "description": "A team object.",
+    "type": "object",
+    "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" }
+    },
+    "required": ["id", "name"]
+}

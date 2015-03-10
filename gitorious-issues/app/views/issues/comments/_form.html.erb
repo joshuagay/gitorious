@@ -1,0 +1,14 @@
+<%= gts_form_for([project, issue, comment]) do |f| %>
+  <div class="gts-comment">
+    <div class="gts-comment-header">
+      <%= avatar(current_user, :size => '24') %>
+      <%= link_to(current_user.fullname || current_user.login, main_app.user_path(current_user)) %>
+    </div>
+    <div class="gts-comment-body">
+      <p>
+        <%= f.input_field :body, :placeholder => 'Add comment...', :class => 'input-expanded gts-textarea-expandable' %>
+      </p>
+      <%= f.submit 'Save', :class => 'btn' %>
+    </div>
+  </div>
+<% end %>

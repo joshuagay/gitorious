@@ -1,0 +1,53 @@
+* Status.gitorious.org
+  This is the Rails app running status.gitorious.org. It's a fairly
+  basic Rails app:
+
+  - Create user accounts using the console
+  - The last created status will be displayed on the home page
+  - Status updates have one of three possible states
+
+
+** Twitter integration
+
+   The status update form contains a checkbox which toggles whether
+   the update will be sent to Twitter after creation. We use the
+   Twitter rubygem to do this, and it will require you to set up:
+
+   - An application on Twitter
+     (https://dev.twitter.com/apps/new). After creating this, you will
+     have a consumer secret and consumer key
+   - To authorize this application for your Twitter account. To do
+     this you need to do some work in the shell
+
+#+BEGIN_SRC shell-script
+rails console
+#+END_SRC
+   
+   and enter into the console:
+
+#+BEGIN_SRC ruby
+consumer = OAuth::Consumer.new(KEY,SECRET, :site => "https://twitter.com")
+token = consumer.get_request_token
+url = token.authorize_url
+#+END_SRC
+
+   Paste the URL above into your browser and accept the message. Then
+   go back to the shell:
+
+#+BEGIN_SRC ruby
+access_token = token.get_access_token
+#+END_SRC
+
+   Take note of the @token and @secret variables from above. You
+   should now have four configuration variables:
+   - a consumer token
+   - a consumer secret
+   - an access token
+   - an access token secret
+     
+   All these need to be exported as environment variables with the following names:
+   - TWITTER_CONSUMER_KEY
+   - TWITTER_CONSUMER_SECRET
+   - TWITTER_OAUTH_KEY
+   - TWITTER_OAUTH_SECRET
+     

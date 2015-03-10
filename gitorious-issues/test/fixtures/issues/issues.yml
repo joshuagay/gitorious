@@ -1,0 +1,39 @@
+one:
+  id: 1
+  title: "issue #1"
+  description: "this is issue number one"
+  user_id: 1
+  project_id: 1
+  issue_id: 1
+  state: "New"
+  priority: 0
+
+two:
+  id: 2
+  title: "issue #2"
+  description: "this is issue number two"
+  user_id: 1
+  project_id: 1
+  issue_id: 2
+  state: "New"
+  priority: 2
+
+three:
+  id: 3
+  title: "issue #3"
+  description: "this is issue number three"
+  user_id: 1
+  project_id: 2
+  issue_id: 3
+  state: "New"
+  priority: 1
+
+four:
+  id: 4
+  title: "issue #4"
+  description: "this is issue number four"
+  user_id: 1
+  project_id: 1
+  issue_id: 4
+  state: "Resolved"
+  priority: 1

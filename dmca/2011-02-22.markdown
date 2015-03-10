@@ -1,0 +1,154 @@
+Marius Mathiesen
+Gitorious AS
+Nedre Slottsgate 13
+0157 NO-OSLO
+Norway
+
+
+**Re: Notification of United States Copyright Law Violations at Listed URLs**
+
+Dear Mr. Mathiesen:
+
+Thank you for your email of February 3, 2011. Sony Computer
+Entertainment America LLC ("SCEA") appreciates Gitorious’s prompt
+compliance with SCEA’s prior takedown request and removal of the
+repositories at the addresses referenced in our February 1, 2011
+letter (the "Feb. 1, 2011 URLs"). As you have requested, the following
+shall explain how the content at the Feb. 1, 2011 URLs is unlawful
+under Norwegian law.
+
+The Norwegian Copyright Act contains prohibitions against the
+circumvention of effective technological protection
+measures. Specifically, section 53a of the Copyright Act prohibits the
+"circumvent[ion of] effective technological protection measures that
+the right holder, or others he has given permission, employs to
+control the copying or making available to the public of a protected
+work." The files hosted at the Listed URLs are circumvention devices
+that violate this statutory provision because they circumvent
+technological protection measures in SCEA’s PlayStation® 3 computer
+entertainment system that protect copyrighted works, including SCEA
+copyrighted software programs, Programmer Tools, and video
+games. Thus, the content at the Listed URLs is in violation of
+Norwegian law as circumvention devices in violation of section 53a
+Norwegian Copyright Act.
+
+Gitorious’s hosting of the content at the Listed URLs subjects it to
+direct liability under the Norwegian Copyright Act. Specifically, it
+is unlawful under section 53a to: "a) sell, rent or in any other way
+make available, b) manufacture or import for the making available to
+the public, c) advertise for sale or rental, d) possess for commercial
+purposes, or e) offer services in connection with" the aforementioned
+circumvention devices. Similarly, under section 53c, "[t]he sale of,
+or possession for purposes of gain, of any means the sole purpose of
+which is to facilitate the unlawful removal or circumvention of
+technical devices for the protection of a computer program, is
+prohibited."
+
+We note that Gitorious’s hosting of the content at the Listed URLs, or
+any similar content constitutes multiple violations of the
+abovementioned provisions of the Norwegian Copyright Act, including
+but not limited to "mak[ing] available," "import[ing] for the making
+available to the public," "possess[ing] for commercial purposes,"
+and/or "possession for purposes of gain."
+
+Furthermore, Gitorious’s hosting activities give rise to liability for
+contributory copyright infringement under the Norwegian Copyright Act
+sections 2 and 54. Specifically, the content at the Listed URLs
+facilitate infringement of copyrighted works, as discussed above. By
+hosting the content at the Listed URLs, Gitorious is thereby making
+the files more accessible to the public, and consequently,
+facilitating copyright infringement of protected works. *See* the
+Norwegian Supreme Court’s napster.no case (Rt. 2005 s. 41) (holding
+owner of the website www.napster.no was liable for contributory
+infringement).
+
+In the time that has passed since your last correspondence, we have
+identified similar content at additional URLs hosted by Gitorious (the
+"Feb. 16, 2011 URLs"). Please refer to the table below identifying the
+addresses containing unlawful content:
+
+* http://gitorious.org/ps3mfw/ps3mfw_builder
+* http://gitorious.org/~lucasedw/ps3mfw/lucasedws-ps3mfw_builder
+* http://gitorious.org/~d3m0n/ps3mfw/d3m0ns-ps3mfw_builder
+* http://gitorious.org/~jakeanthrax/ps3mfw/jakeanthraxs-ps3mfw_builder
+* http://gitorious.org/~java777/qute-ps3-proxy/java777s-qute-ps3-proxy-console
+* http://gitorious.org/~java777/qute-ps3-proxy/java777s-qute-ps3-proxy-gui
+* http://gitorious.org/~drexal/qute-ps3-proxy/drexals-qute-ps3-proxy-gui
+* http://gitorious.org/ps3-sfo-editor
+* http://gitorious.org/ps3-star
+* http://gitorious.org/qute-ps3-proxy
+* http://gitorious.org/qute-ps3-proxy
+* http://gitorious.org/ps3mirror1
+* http://gitorious.org/ps3hvmemchardev
+* http://gitorious.org/psfreedom
+* http://gitorious.org/psfreedom
+* http://gitorious.org/psfreedom
+* http://gitorious.org/~ser8210/ps3free/ser8210s-ps3keys2
+* http://gitorious.org/~okawunga/ps3free/okawungas-ps3keys
+* http://gitorious.org/~deimosfp/ps3free/deimosfps-ps3keys
+* http://gitorious.org/~luthepa1/ps3free/luthepa1s-ps3keys
+* http://gitorious.org/~angelbreak/ps3free/angelbreaks-ps3keys
+* http://gitorious.org/~fungos/ps3free/fungos-syek3sp
+* http://gitorious.org/~rancido/ps3free/rancidos-ps3keys
+* http://gitorious.org/~maverickjesus/ps3free/maverickjesuss-ps3keys
+* http://gitorious.org/~okawunga/ps3free/okawungas-ps3tools
+* http://gitorious.org/~okawunga/ps3free/okawungas-ps3publictools
+* http://gitorious.org/~deimosfp/ps3free/deimosfps-ps3tools
+* http://gitorious.org/~deimosfp/ps3free/deimosfps-ps3publictools
+* http://gitorious.org/~maverickjesus/ps3free/maverickjesuss-ps3tools
+* http://gitorious.org/~maverickjesus/ps3free/maverickjesuss-ps3publictools
+* http://gitorious.org/~angelbreak/ps3free/angelbreaks-ps3tools
+* http://gitorious.org/~angelbreak/ps3free/angelbreaks-ps3publictools
+* http://gitorious.org/~igmar/ps3free/igmars-ps3publictools
+* http://gitorious.org/~lucasedw/ps3free/lucasedws-ps3tools
+* http://gitorious.org/~d3m0n/ps3free/d3m0ns-ps3tools
+* http://gitorious.org/~gnhernandez/ps3free/gnhernandezs-ps3tools
+* http://gitorious.org/~keithrs/ps3free/keithrss-ps3tools
+* http://gitorious.org/~killerdamo/ps3free/killerdamos-ps3tools
+* http://gitorious.org/~ser8210/ps3free/ser8210s-ps3tools2
+* http://gitorious.org/ps3-tools
+* http://gitorious.org/ps3tools
+* http://gitorious.org/ps3free/ps3publictools
+* http://gitorious.org/ps3free
+* http://gitorious.org/ps3free
+* http://gitorious.org/~rancido/ps3free/rancidos-ps3tools
+* http://gitorious.org/~rancido/ps3free/rancidos-ps3publictools
+* http://gitorious.org/~fungos/ps3free/fungos-syek3sp
+* http://gitorious.org/~fungos/ps3free/fungos-sloot3sp
+* http://gitorious.org/ps3free
+* http://gitorious.org/~fungos/ps3free/fungos-slootcilbup3sp
+* http://gitorious.org/~sieco187/ps3free/sieco187
+
+
+
+Specifically, the content at the Listed URLs markets, traffics in,
+distributes, and offers "Custom Firmware," "Keys," and/or "Signing
+Tools" files or components thereof. These files or components thereof
+are illegal because they facilitate infringement of copyrighted works,
+including SCEA copyrighted software programs, Programmer Tools, and
+video games, in violation of the Norwegian Copyright Act sections 2
+and 54, and the United States Copyright Act, 17 U.S.C. § 101, *et
+seq*. and 17 U.S.C. § 501, *et seq*. The files also constitute
+circumvention programs, technologies, devices, services, or components
+because they circumvent SCEA’s PlayStation®3 computer entertainment
+system’s technological protection measures in violation of the
+Norwegian Copyright Act section 53 and the United States Digital
+Millennium Copyright Act ("DMCA"), 17 U.S.C. § 1201, *et seq*.
+
+I have a good faith basis that the web content at the Listed URLs is
+an infringement of SCEA’s rights under Norwegian and United States
+copyright law, and that the infringing content is authorized by
+neither SCEA nor the law.
+
+**Accordingly, SCEA requests that you immediately take down the web
+content at all of the URLs listed above. Please remove the content as
+soon as possible, and no later than by February 23, 2011.** Thank you
+in advance for your continued cooperation and assistance. If you have
+any questions, please contact me at the email address or phone number
+listed above.
+
+
+Sincerely,
+KILPATRICK TOWNSEND & STOCKTON LLP
+
+[private]

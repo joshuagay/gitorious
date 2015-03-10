@@ -1,0 +1,19 @@
+<% issue_assignee_candidates = issue.assignee_candidates.map { |u| { :label => u.login, :id => u.id } }.to_json %>
+
+<%= content_tag(:div, :class => 'issue-assignee-widget autocomplete-widget', :data => { 'gts-env-issue-assignee-candidates' => issue_assignee_candidates }) do %>
+  <%= f.label 'Assigned to' %>
+  <%= f.input_field :assignee_candidate, :as => :string, :name => 'assignee', :value => nil, :placeholder => 'Type username...',
+    :class => 'input-small gts-issue-assignee-candidate' %>
+  <a href="#" class="btn" data-behavior="assign-user">Assign</a>
+  <ul class="issue-assignees">
+    <% issue.assignees.each do |user| %>
+      <li>
+        <button class="btn">
+          <i class="icon-remove"></i>
+          <%= user.login %>
+        </button>
+        <input type="hidden" name="issue[assignee_ids][]" value="<%= user.id %>"/>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

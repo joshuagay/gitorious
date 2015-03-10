@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# make sure git user can write into log and tmp dirs
+# (when they're mounted from the host they're initially owned by root)
+chown -R git:git /srv/gitorious/app/log /srv/gitorious/app/tmp

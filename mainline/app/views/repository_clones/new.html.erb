@@ -1,0 +1,73 @@
+<%
+  #--
+  #   Copyright (C) 2012-2014 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<% @page_title = "Clone #{h(repository.name)}" %>
+<div class="gts-site-header">
+  <div class="container">
+    <div class="row">
+      <h3 class="span">
+        <%= link_to(h(project.title), project) -%>
+      </h3>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <h2><%= t("views.repos.create_title_html",
+            :clone_name => h(repository.name),
+            :clone_url => project_repository_path(project, repository),
+            :project_name => h(project.title),
+            :project_url => project_path(project)) %></h2>
+  <%= error_messages(clone) -%>
+  <%= form_for(clone, {
+          :url => create_clone_project_repository_path(project, repository),
+          :html => { :class => "clone-repository-form form-horizontal",
+                     :"data-gts-repository-to-clone" => repository.name }
+        }) do |f| -%>
+    <fieldset>
+      <div class="control-group">
+        <%= f.label :owner, "Owner", :class => "control-label" -%>
+        <div class="controls">
+          <label class="radio">
+            <input type="radio" name="repository[owner_type]" id="repository_owner_type_user" value="User" data-gts-cloning-user="<%= current_user.login %>" checked>
+            Me
+          </label>
+          <label class="radio">
+            <input type="radio" name="repository[owner_type]" id="repository_owner_type_group" value="Group">
+            <select id="repository_owner_id_group_select" name="repository[owner_id]">
+              <% Team.by_admin(current_user).each do |group| %>
+                <option value="<%= group.id %>"><%= group.name %></option>
+              <% end %>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="control-group">
+        <%= f.label :name, "Name", :class => "control-label" -%>
+        <div class="controls">
+          <%= f.text_field :name, :class => "input-xlarge" -%>
+          <p class="help-block">E.g. performance-fixes, <%= current_user.login %>-sandbox, etc</p>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit"><%= t("views.repos.btn_clone") %></button>
+      </div>
+    </fieldset>
+  <% end %>
+</div>

@@ -1,0 +1,33 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<%= simple_form_for(@message) do |f| %>
+  <fieldset class="messages">
+    <legend>
+      <%= t "views.messages.title_new" %>
+    </legend>
+    <%= f.input :recipient_logins, :label => t("views.messages.recipient"), :input_html => { :class => "autocomplete" } %>
+    <%= f.input :subject, :label => t("views.messages.subject") %>
+    <%= f.input :body, :label => t("views.messages.body"), :input_html => { :class => 'input-xxlarge', :rows => 10 } %>
+  </fieldset>
+  <div class="form-actions">
+    <%= f.submit t("views.messages.submit"), :class => 'btn btn-primary' %>
+  </div>
+<% end %>

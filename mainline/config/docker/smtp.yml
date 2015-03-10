@@ -1,0 +1,5 @@
+# Gitorious SMTP configuration
+
+address: smtp
+port: 25
+openssl_verify_mode: none

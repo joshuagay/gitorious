@@ -1,0 +1,47 @@
+<%
+  #--
+  #   Copyright (C) 2012-2014 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<div class="gts-site-header">
+  <div class="container">
+    <h1><%= t("views.users.openid_build_title") %></h1>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row-fluid">
+    <div class="openid-signup">
+      <%= simple_form_for(user, :as => :user, :url => { :action => "create" }, :html => { :class => 'form-horizontal form-large-labels' }) do |f| %>
+        <fieldset>
+          <legend>
+            <p><%= t("views.users.openid_build_description") %></p>
+          </legend>
+          <%= f.input :email, :as => :email, :required => true, :label => t(:email, :scope => "activerecord.attributes.user") %>
+          <%= f.input :login, :required => true, :label => t(:login, :scope => "activerecord.attributes.user") %>
+          <%= f.input :fullname, :label => t(:fullname, :scope => "activerecord.attributes.user") %>
+          <%= f.input :terms_of_use, :as => :boolean,
+            :label => %(I accept the #{link_to('Terms of Service', Gitorious::View.terms_of_service_url)}).html_safe %>
+          <div class="form-actions">
+            <%= f.submit t("views.common.signup"), :class => 'btn btn-primary' %>
+          </div>
+        </fieldset>
+      <% end %>
+    </div>
+  </div>
+</div>

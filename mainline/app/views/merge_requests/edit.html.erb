@@ -1,0 +1,42 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<%= site_header do %>
+  <h2>
+    <%= t("views.merges.edit_title") %>
+  </h2>
+<% end %>
+
+<div class="container">
+  <%= simple_form_for [@project, @repository, @merge_request], :html => { :class => 'form form-horizontal merge-request-form' } do |f| %>
+    <%= f.input :summary, :label => t(:summary, :scope => 'activerecord.attributes.merge_request'),
+      :hint => t('views.merges.info.summary') %>
+    <%= f.input :proposal, :label => t(:proposal, :scope => 'activerecord.attributes.merge_request'),
+      :hint => t('views.merges.info.proposal'),
+      :as => :text,
+      :input_html => { :rows => 8, :class => 'input-xxlarge' } %>
+    <%= render :partial => "commit_list" %>
+    <div class="form-actions">
+      <%= f.submit t("views.merges.update_btn"), :class => 'btn btn-primary' %>
+    </div>
+  <% end %>
+<script data-gts-env-commit-list-url="<%= commit_list_project_repository_merge_requests_path %>"
+        data-gts-env-target-branches-url="<%= target_branches_project_repository_merge_requests_path %>"></script>
+</div>

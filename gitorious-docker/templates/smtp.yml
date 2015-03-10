@@ -1,0 +1,21 @@
+# Gitorious SMTP configuration
+
+# The following configuration uses the embedded Postfix instance. Feel free to
+# change it to your own SMTP server address.
+
+# NOTE: "localhost" refers to the container. If you want to use container's host
+# machine as SMTP address then use IP address or FQDN instead.
+
+address: localhost
+port: 25
+openssl_verify_mode: none
+
+# Example Gmail configuration:
+
+# address: "smtp.gmail.com"
+# port: 587
+# domain: "example.com"
+# authentication: "plain"
+# enable_starttls_auto: true
+# user_name: 'foo'
+# password: 'bar'

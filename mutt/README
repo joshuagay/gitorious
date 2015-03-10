@@ -1,0 +1,12 @@
+WHAT?
+=====
+
+A Git-over-HTTP server running in JRuby.
+
+HOW?
+====
+
+* Install Jruby. If you're running rvm, this is as easy as `rvm install jruby`
+* Set the environment variable GITORIOUS_ROOT to point to your Gitorious installation
+* Run it: `ruby run.rb`
+* Try cloning something: `git clone http://localhost:8080/project/repository.git`

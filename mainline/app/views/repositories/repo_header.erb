@@ -1,0 +1,48 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+%><%
+header_level = defined?(header_level) && header_level || 1
+@body_class = "gts-private" if repository.private?
+ref = defined?(ref) && !ref.nil? ? ref : "HEAD"
+has_git_backend = repository.ready? && repository.has_commits?
+%><div class="gts-site-header" data-gts-env-repository-view-state-path="/users/view_state/repository/<%= repository.id %>.json">
+  <div class="container">
+    <div class="row">
+      <%= repository_title(repository, header_level) %>
+    </div>
+    <div class="row">
+      <div class="span">
+        <%= remote_url_selection(app, repository) %>
+      </div>
+      <%= repo_action_buttons(app, repository, ref) if has_git_backend %>
+    </div>
+    <div class="collapse gts-help row" id="repo-url-help">
+      <%= clone_help(app, repository) %>
+    </div>
+    <div class="row gts-description">
+      <div class="span gts-repository-description-ph">
+        <%= description(repository) %>
+      </div>
+    </div>
+    <% if has_git_backend %>
+      <%= repo_navigation(repository, ref, defined?(active) && active) %>
+    <% else %>
+      <div class="gts-standalone"><p class="gts-repository-admin-ph gts-placeholder"></p></div>
+    <% end %>
+  </div>
+</div>

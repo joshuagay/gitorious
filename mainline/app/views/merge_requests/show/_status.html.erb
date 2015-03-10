@@ -1,0 +1,35 @@
+<%
+#--
+#   Copyright (C) 2012-2013 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+<%
+  source_repo_link = project_repository_path(source_repo.project, source_repo)
+  target_repo_link = project_repository_path(target_repo.project, target_repo)
+  source_branch_link = project_repository_commits_in_ref_path(source_repo.project, source_repo, merge_request.source_branch)
+  target_branch_link = project_repository_commits_in_ref_path(target_repo.project, target_repo, merge_request.target_branch)
+%>
+
+<div class="well gts-mr-status">
+  <%= merge_request.status_label_tag %>
+  <div class="gts-mr-status-desc">
+    <%= link_to(avatar(user, :size => 24) + " #{user.login}", user_path(user)) %>
+    requested a merge from
+    <%= link_to(source_repo.name, source_repo_link) %>:<%= link_to(merge_request.source_branch, source_branch_link) %>
+    to <%= link_to(target_repo.name, target_repo_link) %>:<%= link_to(merge_request.target_branch, target_branch_link) %>
+    <%= time_ago_in_words(merge_request.created_at) %> ago
+  </div>
+</div>

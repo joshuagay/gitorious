@@ -1,0 +1,38 @@
+* Gitoriousd – the Gitorious daemon
+   - Main executable in /usr/sbin/gitorious
+     Responds to normal start, stop, status, restart, reload
+   - Pids in /var/run/gitorious/$service.pid
+   - Executables in /usr/libexec/gitorious/$service. All executable files in here will be run
+   - /etc/gitorious.conf contains (at least) GITORIOUS_ROOT
+
+   Each process should respond to {start,stop,status,restart,reload} and emit
+   relevant exit codes
+
+#+BEGIN_EXAMPLE
+gitorious start: Starts all (non-running) processes from libexec
+gitorious stop: Sends SIGQUIT to all running processes
+gitorious restart: stop && restart
+gitorious reload: Sends SIGHUP to all processes, which will cause them to reload config
+[gitorious logrotate: Sends SIGUSR1 to all processes, which will cause them to reopen log files]
+#+END_EXAMPLE
+** Which daemons?
+*** TODO git-daemons
+*** TODO git-proxy
+*** TODO unicorn
+*** DONE searchd
+*** DONE resque-worker
+** Main scenarios
+*** System startup: start all associated daemons
+    - [ ] Start all tasks
+    - [ ] Ignore running tasks (ie don't restart any tasks)
+*** System shutdown: stop all associated daemons
+    - [ ] Stop all tasks
+    - [ ] Ignore ones that aren't running (ie. don't complain)
+*** Check status
+    - [ ] UP or DOWN
+*** Log rotation
+    - [ ] "Reload" all running tasks
+    - [ ] Ignore ones that aren't running (ie. don't start any tasks)
+*** Restart (after code updates etc)
+    - [ ] Restart all tasks
+    - [ ] Start the ones that aren't running

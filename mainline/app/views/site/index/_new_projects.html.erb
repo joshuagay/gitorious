@@ -1,0 +1,45 @@
+<%
+  #--
+  #   Copyright (C) 2013-2014 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<%= pull_box(defined?(title) ? title : t("views.site.newest_projects"), :class => "pull-box-510") do %>
+  <% if logged_in? %>
+    <div class="pull-box-header-action">
+      <%= link_to(new_project_path, :class => 'btn btn-primary') do %>
+        <i class="icon-white icon-plus-sign"></i>
+        <%= t("views.projects.create_new") %>
+      <% end %>
+    </div>
+  <% end %>
+  <table class="table">
+    <% projects.each do |project| %>
+      <tr class="project">
+        <td>
+          <%= link_to h(project.title), project %>
+        </td>
+      </tr>
+    <% end %>
+    <tfoot>
+      <tr>
+        <td>
+          <%= link_to t("views.site.view_more_html"), projects_path %>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+<% end %>

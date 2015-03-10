@@ -1,0 +1,6 @@
+# Read about fixtures at
+# http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+issue_one_bug:
+  issue_id: 1
+  label_id: 1

@@ -1,0 +1,42 @@
+#+TITLE:     The Gitorious Book
+#+EMAIL:     support@gitorious.org
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS: H:3 num:nil toc:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS: TeX:t LaTeX:t skip:nil d:nil todo:nil pri:nil tags:nil
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:
+#+LINK_HOME:
+#+XSLT:
+
+*31st October 2012:* This is the new, official Gitorious documentation
+and is a work in progress. New content will arrive here gradually. In
+the meantime, please seek out the [[http://gitorious.org/gitorious/pages/Home][Project wiki]] or the [[http://groups.google.com/group/gitorious?hl%3Den][Gitorious Google
+Group]] for documentation and troubleshooting.
+
+
+@<div class="alert alert-block">We've reorganized the
+pages into different documents as the content has grown.
+
+See either the [[file:admin-guide.org::*Gitorious%20administration%20guide][Gitorious administration guide]], the [[file:user-guide.org::*Gitorious%20user%20guide][Gitorious user
+guide]] or the [[file:developer-guide.org::*Gitorious%20developer%20guide][Gitorious developer guide]].
+@</div>
+
+
+
+* TODO Introduction						   :noexport:
+** History
+** Features & benefits
+** FOSS licensing
+** Current maintainers
+** Funding
+* TODO Frequently Asked Questions				   :noexport:
+* TODO Need more help?						   :noexport:
+** Google Group
+** #gitorious on IRC
+** Gitorious AS services & products
+
+* TODO Feedback							   :noexport:

@@ -1,0 +1,51 @@
+Gitorious CLI
+==========
+
+Provide a CLI interface to merge requests in your Gitorious
+repository: list merge requests, open them in a browser etc.
+
+Installation
+----------
+
+The git-merge-requests script should be put into a directory in your
+PATH, after which you may use is as a Git command.
+
+
+Requirements
+----------
+
+The tool is written in Ruby, and requires the following libraries:
+
+* rubygems
+* nokogiri
+
+Operations
+----------
+
+* git merge-requests list [STATUS]: list all merge requests with given status (default "Open")
+* git merge-requests show ID: Open the specified merge request in a browser
+* git merge-requests checkout ID: Check out the specified merge
+  request into a new branch (merge-requests/ID). This branch will
+  start on the first commit in the merge request and end on the last
+  commit in the merge request.
+* git merge-requests diff ID: Will checkout the specified merge
+  request if that has not been done, and then display the diff in that
+  merge request
+
+Issues/TODO
+----------
+
+Lots! 
+
+* A non-documented issue is that we assume the Git remote on Gitorious
+  is named "origin".
+* We should have a merge command (which merges and resolves)
+* Tab completion
+* Complete merge request statuses from project page on Gitorious
+* Determine if the merge request applies cleanly to the branch it's
+  proposed merged into
+
+Contributing
+----------
+
+Clone the repository, submit a merge request (!)

@@ -1,0 +1,34 @@
+<%
+#--
+#   Copyright (C) 2012-2013 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+<%= simple_form_for(service_type.adapter, :as => :service,
+             :url => create_project_repository_services_path(repository.project, repository, service_type.service_type),
+             :method => "post",
+             :html => { :id => "new_#{service_type.name}_service", :class => "form-horizontal" }) do |f| %>
+  <fieldset>
+    <legend>
+      <%= t("views.tabs.#{service_type.name}") %>
+    </legend>
+    <%= render("stats", :services => service_type.services, :repository => repository, :service_type => service_type) %>
+    <%= render(service_type.template_path, :f => f) %>
+  </fieldset>
+
+  <div class="form-actions">
+    <%= f.submit t('views.common.save'), :class => 'btn btn-primary' %>
+  </div>
+<% end %>

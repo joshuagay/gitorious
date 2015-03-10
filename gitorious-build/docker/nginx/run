@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+mkdir -p /var/log/nginx
+erb /etc/nginx/sites-available/default.erb >/etc/nginx/sites-enabled/default
+
+exec "$@"

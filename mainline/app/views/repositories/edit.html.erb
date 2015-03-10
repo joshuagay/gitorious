@@ -1,0 +1,80 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<%= repo_header repository, :current_user => current_user, :active => :admin, :header_level => 2 %>
+
+<div class="container" id="gts-pjax-container">
+  <%= error_messages(repo_edit) -%>
+  <%= form_for(repo_edit, :as => :repository, :url => project_repository_url(repository.project, repository), :method => "put", :html => { :class => "form-horizontal" }) do |f| -%>
+    <fieldset>
+      <legend><%= @title = "Editing repository #{repository.slug}" %></legend>
+      <%= live_md_preview_textarea(f, :description, "Description") %>
+      <div class="control-group">
+        <%= f.label :name, :class => "control-label" -%>
+        <div class="controls">
+          <%= f.text_field :name, :class => "input-xlarge" -%>
+          <p class="help-block">
+            NB! Changing the name will also immediately change all URLs (including Git clone URLs).
+          </p>
+        </div>
+      </div>
+      <div class="control-group">
+        <%= f.label :head, :class => "control-label" -%>
+        <div class="controls">
+          <%= f.select(:head, heads.map{|h| [h.name, h.name] },
+                :selected => repository.head ? repository.head.name : nil) -%>
+          <p class="help-block">
+            Changes the symbolic ref the HEAD in the git repository points to, i.e.
+            the default branch to show.
+          </p>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="force-pushing" class="control-label">Force-pushing</label>
+        <div class="controls">
+          <label class="checkbox">
+            <input type="checkbox" value="1" name="force_pushing" id="force-pushing"<%= " checked" if !repository.deny_force_pushing %>>
+            Enable
+          </label>
+          <p class="help-block">
+            Allows pushing "non-fastforwards" (e.g. git push -f). Enabling
+            force-pushing also allows tag<br>creation and remote branch removals.
+          </p>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="merge-requests" class="control-label">Merge requests</label>
+        <div class="controls">
+          <label class="checkbox">
+            <%= f.check_box :merge_requests_enabled, :id => "merge-requests" %>
+            Enable
+          </label>
+          <p class="help-block">
+            Allow Gitorious users to request merging of contributions from
+            repository clones.
+          </p>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Save changes</button>
+        <span class="cancel"><%= link_to 'Cancel', project_repository_path(repository.project, repository) %></span>
+      </div>
+    </fieldset>
+  <% end %>
+</div>

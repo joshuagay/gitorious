@@ -1,0 +1,182 @@
+Gitorious AS
+Nedre Slottsgate 13
+0157 NO-OSLO
+Norway
+
+
+** Re: Notification of United States Copyright Law Violations at Listed URLs**
+
+**To Whom It May Concern:**
+
+I, the undersigned, state under penalty of perjury that:
+
+We represent Sony Computer Entertainment America LLC (“SCEA”) in
+intellectual property and litigation matters. SCEA has recently
+learned that the content at the following URLs (hereinafter, “Listed
+URLs”) is hosted by Gitorious, and the links are distributing
+materials that violate copyright laws, and/or contributes to and
+induces copyright infringement:
+
+* http://gitorious.org/ps3free/psgroove
+* http://gitorious.org/ps3free/ps3keys
+* http://gitorious.org/ps3free/ps3tools
+* http://gitorious.org/ps3free/lv2patcher
+* http://gitorious.org/ps3free/ps3utils
+* http://gitorious.org/ps3free/ps3publictools
+* http://gitorious.org/~master737373/ps3free/psgroove-mirror-
+* http://gitorious.org/~master737373/ps3free/psgroove1
+* http://gitorious.org/~master737373/ps3free/ps3keys1
+* http://gitorious.org/~master737373/ps3free/master737373s-ps3tools
+* http://gitorious.org/~p455w0rd/ps3free/p455w0rds-psgroove
+* http://gitorious.org/~p455w0rd/ps3free/p455w0rds-ps3keys
+* http://gitorious.org/~p455w0rd/ps3free/p455w0rds-ps3tools
+* http://gitorious.org/~p455w0rd/ps3free/p455w0rds-lv2patcher
+* http://gitorious.org/~adamking/ps3free/adamkings-psgroove
+* http://gitorious.org/~adamking/ps3free/adamkings-ps3keys
+* http://gitorious.org/~adamking/ps3free/adamkings-ps3tools
+* http://gitorious.org/~adamking/ps3free/adamkings-lv2patcher
+* http://gitorious.org/~adamking/ps3free/adamkings-ps3utils
+* http://gitorious.org/~dustinpl47/ps3free/dustinpl47s-ps3keys
+* http://gitorious.org/~dustinpl47/ps3free/dustinpl47s-ps3tools
+* http://gitorious.org/~dustinpl47/ps3free/dustinpl47s-lv2patcher
+* http://gitorious.org/~dustinpl47/ps3free/dustinpl47s-ps3utils
+* http://gitorious.org/~dustinpl47/ps3free/dustinpl47s-psgroove
+* http://gitorious.org/~drchaos81/ps3free/drchaos81s-psgroove
+* http://gitorious.org/~drchaos81/ps3free/drchaos81s-ps3keys
+* http://gitorious.org/~drchaos81/ps3free/drchaos81s-ps3tools
+* http://gitorious.org/~drchaos81/ps3free/drchaos81s-lv2patcher
+* http://gitorious.org/~drchaos81/ps3free/drchaos81s-ps3utils
+* http://gitorious.org/~arriba/ps3free/arribas-ps3keys
+* http://gitorious.org/~rancido/ps3free/rancidos-psgroove_graf
+* http://gitorious.org/~arriba/ps3free/arribas-ps3tools
+* http://gitorious.org/~rancido/ps3free/rancidos-ps3keys
+* http://gitorious.org/~rancido/ps3free/rancidos-psgroove
+* http://gitorious.org/~rancido/ps3free/rancidos-ps3tools
+* http://gitorious.org/~rancido/ps3free/rancidos-lv2patcher
+* http://gitorious.org/~rancido/ps3free/rancidos-ps3utils
+* http://gitorious.org/~rancido/ps3free/rancidos-ps3utils2
+* http://gitorious.org/~ps3mirrors/ps3free/ps3mirrors-lv2patcher
+* http://gitorious.org/~ps3mirrors/ps3free/ps3mirrors-psgroove
+* http://gitorious.org/~ps3mirrors/ps3free/ps3mirrors-ps3tools
+* http://gitorious.org/~ps3mirrors/ps3free/ps3mirrors-ps3utils
+* http://gitorious.org/~ps3mirrors/ps3free/ps3mirrors-ps3keys
+* http://gitorious.org/~masterr12/ps3free/masterr12s-ps3keys
+* http://gitorious.org/~r8j6/ps3free/r8j6-psgroove
+* http://gitorious.org/~r8j6/ps3free/r8j6-ps3keys
+* http://gitorious.org/~r8j6/ps3free/r8j6-ps3tools
+* http://gitorious.org/~r8j6/ps3free/r8j6-lv2patcher
+* http://gitorious.org/~r8j6/ps3free/r8j6-ps3utils
+* http://gitorious.org/~sg1man/ps3free/sg1mans-psgroove
+* http://gitorious.org/~sg1man/ps3free/sg1mans-ps3keys
+* http://gitorious.org/~sg1man/ps3free/sg1mans-ps3tools
+* http://gitorious.org/~sg1man/ps3free/sg1mans-lv2patcher
+* http://gitorious.org/~sg1man/ps3free/sg1mans-ps3utils
+* http://gitorious.org/~leasfaif/ps3free/leasfaifs-ps3keys
+* http://gitorious.org/~chatbox/ps3free/chatboxs-ps3tools
+* http://gitorious.org/~hdost/ps3free/hdosts-psgroove
+* http://gitorious.org/~hdost/ps3free/hdosts-ps3keys
+* http://gitorious.org/~hdost/ps3free/hdosts-ps3tools
+* http://gitorious.org/~hdost/ps3free/hdosts-lv2patcher
+* http://gitorious.org/~hdost/ps3free/hdosts-ps3utils
+* http://gitorious.org/~chatbox/ps3free/chatboxs-psgroove
+* http://gitorious.org/~chatbox/ps3free/chatboxs-ps3keys
+* http://gitorious.org/~chatbox/ps3free/chatboxs-lv2patcher
+* http://gitorious.org/~chatbox/ps3free/chatboxs-ps3utils
+* http://gitorious.org/~theshao/ps3free/theshaos-psgroove
+* http://gitorious.org/~theshao/ps3free/theshaos-ps3keys
+* http://gitorious.org/~tonymontana079/ps3free/tonymontana079s-p53keyz
+* http://gitorious.org/~tonymontana079/ps3free/tonymontana079s-ps3keys
+* http://gitorious.org/~aabragan/ps3free/aabragans-psgroove
+* http://gitorious.org/~aabragan/ps3free/aabragans-ps3keys
+* http://gitorious.org/~aabragan/ps3free/aabragans-ps3tools
+* http://gitorious.org/~aabragan/ps3free/aabragans-lv2patcher
+* http://gitorious.org/~aabragan/ps3free/aabragans-ps3utils
+* http://gitorious.org/~gbraad/ps3free/gbraads-ps3keys
+* http://gitorious.org/~potat0/ps3free/ps3groove-clone
+* http://gitorious.org/~potat0/ps3free/ps3keys-clone
+* http://gitorious.org/~potat0/ps3free/ps3tools-clone
+* http://gitorious.org/~potat0/ps3free/potat0s-lv2patcher
+* http://gitorious.org/~potat0/ps3free/potat0s-ps3utils
+* http://gitorious.org/~ikbnks/ps3free/ikbnkss-psgroove
+* http://gitorious.org/~ikbnks/ps3free/ikbnkss-ikbnkss-psgroove
+* http://gitorious.org/~hjonline/ps3free/hjonlines-psgroove
+* http://gitorious.org/~fucksony/ps3free/fucksonys-psgroove
+* http://gitorious.org/~fucksony/ps3free/fucksonys-ps3keys
+* http://gitorious.org/~fucksony/ps3free/fucksonys-ps3tools
+* http://gitorious.org/~fucksony/ps3free/fucksonys-lv2patcher
+* http://gitorious.org/~fucksony/ps3free/fucksonys-ps3utils
+* http://gitorious.org/~dcrypter/ps3free/dcrypters-psgroove
+* http://gitorious.org/~dcrypter/ps3free/dcrypters-ps3keys
+* http://gitorious.org/~dcrypter/ps3free/dcrypters-ps3tools
+* http://gitorious.org/~dcrypter/ps3free/dcrypters-lv2patcher
+* http://gitorious.org/~dcrypter/ps3free/dcrypters-ps3utils
+* http://gitorious.org/~alanliddeke/ps3free/alanliddekes-ps3utils
+* http://gitorious.org/~d3m0n/ps3free/d3m0ns-psgroove
+* http://gitorious.org/~d3m0n/ps3free/d3m0ns-ps3keys
+* http://gitorious.org/~d3m0n/ps3free/d3m0ns-ps3tools
+* http://gitorious.org/~d3m0n/ps3free/d3m0ns-lv2patcher
+* http://gitorious.org/~d3m0n/ps3free/d3m0ns-ps3utils
+* http://gitorious.org/~drexal/ps3free/drexals-ps3keys
+* http://gitorious.org/~drexal/ps3free/drexals-ps3tools
+* http://gitorious.org/~drexal/ps3free/drexals-ps3utils
+* http://gitorious.org/~drexal/ps3free/drexals-lv2patcher
+* http://gitorious.org/~razdjp/ps3free/razdjps-psgroove
+* http://gitorious.org/~razdjp/ps3free/razdjps-ps3keys
+* http://gitorious.org/~razdjp/ps3free/razdjps-ps3tools
+* http://gitorious.org/~razdjp/ps3free/razdjps-lv2patcher
+* http://gitorious.org/~razdjp/ps3free/razdjps-ps3utils
+* http://gitorious.org/~cra86/ps3free/cra86s-psgroove
+* http://gitorious.org/~cra86/ps3free/cra86s-ps3keys
+* http://gitorious.org/~cra86/ps3free/cra86s-ps3tools
+* http://gitorious.org/~cra86/ps3free/cra86s-lv2patcher
+* http://gitorious.org/~cra86/ps3free/cra86s-ps3utils
+* http://gitorious.org/~stengaard/ps3free/stengaards-psgroove
+* http://gitorious.org/~stengaard/ps3free/stengaards-ps3keys
+* http://gitorious.org/~stengaard/ps3free/stengaards-ps3tools
+* http://gitorious.org/~stengaard/ps3free/stengaards-lv2patcher
+* http://gitorious.org/~stengaard/ps3free/stengaards-ps3utils
+* http://gitorious.org/~stengaard/ps3free/stengaards-ps3publictools
+* http://gitorious.org/~eothred/ps3free/eothreds-ps3keys
+* http://gitorious.org/~eothred/ps3free/eothreds-ps3tools
+* http://gitorious.org/~eothred/ps3free/eothreds-ps3utils
+* http://gitorious.org/~eothred/ps3free/eothreds-ps3utils
+* http://gitorious.org/~acgh213/ps3free/acgh213s-psgroove
+* http://gitorious.org/~catch22/ps3free/catch22s-psgroove
+
+Specifically, the content at the Listed URLs markets, trafficks in,
+distributes, and offers “Custom Firmware” files or components thereof,
+as seen in the attached screenshot. These “Custom Firmware” files or
+components thereof are illegal because they facilitate infringement of
+copyrighted works, including SCEA copyrighted software programs,
+Programmer Tools, and video games, in violation of the United States
+Copyright Act, 17 U.S.C. § 101, et seq. and 17 U.S.C. § 501, et
+seq. The files also constitute circumvention programs, technologies,
+devices, services, or components because they circumvent SCEA’s
+PlayStation®3 computer entertainment system’s technological protection
+measures in violation of the United States Digital Millennium
+Copyright Act (“DMCA”), 17 U.S.C. § 1201, et seq. U.S. Federal law
+provides for injunctive relief, statutory damages, and recovery of
+monetary damages, including any profits derived from infringing
+activities and SCEA’s attorneys’ fees under such circumstances. I have
+attached a screen capture showing the website’s distribution of these
+illegal files for your reference.
+
+I have a good faith basis that the web content at the Listed URLs is
+an infringement of SCEA’s rights under copyright law, including but
+not limited to the DMCA, and that the infringing content is authorized
+by neither SCEA nor the law.
+
+**SCEA requests that you immediately take down the web content located
+  at the Listed URLs, and promptly disclose to SCEA the identities and
+  contact information corresponding to the account owners and/or users
+  of your hosting services who posted the content identified herein.**
+
+**Please remove the content as soon as possible, and no later than by
+February 2, 2011.** Finally, the information in this notice is
+accurate. If you have any questions, please contact me at the email
+address or phone number listed above.
+
+Sincerely,
+
+KILPATRICK TOWNSEND and STOCKTON LLP
+[private]

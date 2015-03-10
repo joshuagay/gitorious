@@ -1,0 +1,4 @@
+TODO
+- Cache the looked up paths [OK]
+- set up appropriate logging of lookups [OK]
+- Return a 404 on 404s

@@ -1,0 +1,50 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "title": "Project",
+    "description": "A Gitorious project",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "The unique identifier for a product",
+            "type": "integer"
+        },
+        "title": {
+            "description": "The project name",
+            "type": "string"
+        },
+        "slug": {
+            "description": "The name as it appears in URLs etc.",
+            "type": "string"
+        },
+        "description": {
+            "description": "The project description. May contain markdown and simple HTML",
+            "type": "string"
+        },
+        "license": {
+            "description": "The license name, e.g. 'MIT License'",
+            "type": "string"
+        },
+        "home_url": {
+            "description": "URL to the project's webpage",
+            "type": "string"
+        },
+        "mailinglist_url": {
+            "description": "URL to the project's webpage",
+            "type": "string"
+        },
+        "bugtracker_url": {
+            "description": "URL to the project's bugtracker",
+            "type": "string"
+        },
+        "owner": { "$ref": "owner" },
+        "wiki_url": {
+            "description": "URL to the wiki, if enabled",
+            "type": "string"
+        },
+        "created_at": {
+            "description": "When the project was created, as a timestamp (ms since the epoch)",
+            "type": "integer"
+        }
+    },
+    "required": ["id", "title", "description", "owner", "created_at"]
+}

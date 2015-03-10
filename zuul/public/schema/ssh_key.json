@@ -1,0 +1,16 @@
+{
+    "id": "https://api.gitorious.org/schema/ssh-key#",
+    "$schema": "http://json-schema.org/schema#",
+    "title": "SSH key",
+    "description": "SSH key",
+    "type": "object",
+    "properties": {
+        "id": { "type": "integer" },
+        "key": { "type": "string" },
+        "comment": {
+            "description": "A short comment, typically user@machine e.g: cjohansen@tattoonie",
+            "type": "string"
+        }
+    },
+    "required": ["id", "key", "comment"]
+}

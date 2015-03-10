@@ -1,0 +1,19 @@
+{
+    "id": "http://api.gitorious.org/schema/repository#",
+    "$schema": "http://json-schema.org/schema#",
+    "title": "Repository payload",
+    "description": "Creating a new Gitorious repository",
+    "type": "object",
+    "properties": {
+        "name": {
+            "description": "The repository name",
+            "type": "string"
+        },
+        "description": {
+            "description": "The repository description. May contain markdown and simple HTML",
+            "type": "string"
+        },
+        "owner": { "$ref": "owner" }
+    },
+    "required": ["name", "owner"]
+}

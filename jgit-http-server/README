@@ -1,0 +1,93 @@
+Gitorious HTTP server
+=====================
+
+This package uses JGit's [1] implementation of "smart" HTTP transport for
+Gitorious repositories. This will be *a lot* faster than the HTTP
+transport that ships with Gitorious, since it uses Git's pack files
+instead of walking individual commits. 
+
+http://progit.org/2010/03/04/smart-http.html details the git part of this.
+
+This app itself does very little, except translate the incoming URL to
+a path in the file system. JGit is a truly awesome project, and does
+most of the heavy lifting for us.
+
+It supports pull only, ATM.
+
+
+Running it:
+-----------
+- Copy src/main/webapp/WEB-INF/web.xml.example to src/main/webapp/WEB-INF/web.xml
+- Verify URL mappings in GitoriousResolver (in src/main/webapp/WEB-INF/web.xml):
+
+    <init-param>
+      <param-name>repository_root</param-name>
+      <!-- Enter the root of your repositories below -->
+      <param-value>/opt/gitorious/repositories/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>permission_base_uri</param-name>
+      <!-- Enter the URL your gitorious installation is set up with -->
+      <param-value>http://gitorious.here:3000/</param-value>
+    </init-param>
+
+- mvn install
+- mvn jetty:run
+
+Try it out locally:
+
+  git clone http://localhost:8080/<project>/<repository>.git
+
+With jetty, standalone:
+-----------------------
+
+Download jetty, or install via your package manager. Configure WEB-INF/web.xml as above.
+JETTY_HOME should be the root of your Jetty installation
+
+$ mvn package
+$ cp target/http-server-0.9-SNAPSHOT.war $JETTY_HOME/webapps/git.war
+$ cd $JETTY_HOME
+$ sudo -u git nohup java -jar start.jar >> gitorious_http.log &
+
+This will start jetty and mount this app under /git.
+
+Try it out:
+
+  git clone http://localhost:<JETTY_PORT>/git/<project>/<repository>.git
+
+
+Behind a proxy/cache: 
+---------------------
+
+When running in a production environment, you may set up the jetty
+server to listen on port 80. If this is not an option, you may put
+this behind a proxy. Gitorious will, by default, interpret all
+requests to git.<gitorious_host> to be a Git-over-HTTP request. Taking
+advantage of this, you could set up varnish as such (in
+/etc/varnish/default.vcl), if you use Varnish [2]:
+
+backend default {
+  .host = "127.0.0.1";
+  .port = "81"; # Provided Apache is set up to listen on 81
+}
+
+backend git_http {
+  .host = "127.0.0.1";
+  .port = "9000"; # The port Jetty is set up to listen on
+}
+
+sub vcl_recv {
+  if (req.http.host ~ "^git.gitorious.org$") { # for gitorious.org
+    if (req.url ~ ".git") {
+      set req.backend = git_http;
+      set req.url = "/git"  req.url;  # If jetty is not mounted on /
+    } else {
+      error 404 "This is not a Git repository";
+    }
+    # Defaults, uses the default backend
+  } 
+}
+
+
+1: http://www.jgit.org/ Git, implemented in java
+2: http://www.varnish-cache.org/ Varnish cache

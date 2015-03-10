@@ -1,0 +1,24 @@
+{
+    "id": "https://api.gitorious.org/schema/team-membership#",
+    "$schema": "http://json-schema.org/schema#",
+    "title": "Team membership",
+    "description": "Team ",
+    "type": "object",
+    "properties": {
+        "id": { "type": "integer" },
+        "user": {
+            "type": "object",
+            "properties": {
+                "login": { "type": "string" }
+            }
+        },
+        "group": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" }
+            }
+        },
+        "role": { "enum": ["member", "administrator"] }
+    },
+    "required": ["id", "user", "group", "role"]
+}

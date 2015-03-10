@@ -1,0 +1,73 @@
+<%
+  # encoding: utf-8
+  #--
+  #   Copyright (C) 2012 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<%= render "header" %>
+<% root_message = MessagePresenter.new(@message, current_user, self) %>
+
+<div class="container">
+  <h3><%= h(root_message.subject) %></h3>
+  <% root_message.messages_in_thread.each do |message| %>
+    <div class="<%= message.message_class %>" id="<%= dom_id(message) %>">
+      <div class="avatar">
+        <%= message.sender_avatar %>
+      </div>
+      <div class="message">
+        <% unless message.subject == root_message.subject %>
+          <h2 class="subject"><%=h message.subject %></h2>
+        <% end %>
+        <p class="meta">
+          <%= message.message_title %> <%= distance_of_time_in_words_to_now(message.created_at) %> ago
+        </p>
+        <p class="body">
+          <%= simple_format h(message.body) %>
+          <%= render(:partial => "notifiable", :locals => {:notifiable => message.notifiable}) %>
+        </p>
+        <hr/>
+        <ul class="message_actions unstyled">
+          <% if message.unread_by_viewer? %>
+            <li id="<%= dom_id(message, 'mark_as_read') %>">
+              <a class="mark_as_unread" href="<%= read_message_path(message) %>">
+                <%= t('views.messages.mark_as_read') %>
+              </a>
+            </li>
+          <% end %>
+
+          <% if message.repliable? %>
+            <li>
+              <%= link_to_function(t("views.messages.reply"), "$('##{dom_id(message,"reply_to")}').toggle()", :class => 'btn') %>
+            </li>
+          <% end %>
+        </ul>
+        <% if message.repliable? %>
+          <div class="reply" style="display:none" id="<%= dom_id(message,"reply_to") %>">
+            <%= simple_form_for(@reply, :url => reply_message_path(message)) do |f| %>
+              <%= f.input :subject, :label => t('views.messages.subject') %>
+              <%= f.input :body, :label => t('views.messages.body'), :input_html => { :class => 'input-xxlarge', :rows => 10 } %>
+              <div class="form-actions">
+                <%= f.submit t("views.messages.submit"), :class => 'btn btn-primary' %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

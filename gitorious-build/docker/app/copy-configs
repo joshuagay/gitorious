@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -e
+
+EXTERNAL_CONFIG_DIR=/srv/gitorious/config
+INTERNAL_CONFIG_DIR=/srv/gitorious/app/config/internal
+TARGET_CONFIG_DIR=/srv/gitorious/app/config
+
+copy-config() {
+  rm -f $TARGET_CONFIG_DIR/$1
+
+  if [[ -e $EXTERNAL_CONFIG_DIR/$1 ]]; then
+    ln -ns $EXTERNAL_CONFIG_DIR/$1 $TARGET_CONFIG_DIR/$1
+  elif [[ -e $INTERNAL_CONFIG_DIR/$1 ]]; then
+    ln -ns $INTERNAL_CONFIG_DIR/$1 $TARGET_CONFIG_DIR/$1
+  fi
+}
+
+# put config files in app's config dir, favoring the external ones
+copy-config gitorious.yml
+copy-config gitorious.overrides.yml
+copy-config database.yml
+copy-config memcache.yml
+copy-config resque.yml
+copy-config smtp.yml
+copy-config authentication.yml
+copy-config thinking_sphinx.yml
+copy-config unicorn.rb

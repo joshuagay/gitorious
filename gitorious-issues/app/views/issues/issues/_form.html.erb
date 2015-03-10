@@ -1,0 +1,30 @@
+<% milestones = Issues::Milestone.where(:project_id => project.id).sorted %>
+<% states     = Issues::Issue::STATES %>
+<% priorities = Issues::Issue::PRIORITIES.to_a.map(&:reverse) %>
+
+<%= gts_form_for([project, issue]) do |f| %>
+  <div class="row-fluid">
+    <div class="span8">
+      <p>
+        <%= f.input_field :title, :placeholder => 'Title', :label => false, :class => 'input-expanded' %>
+      </p>
+      <p>
+        <%= f.input_field :description, :placeholder => 'Description' %>
+      </p>
+    </div>
+    <div class="span4">
+      <div class="well gts-well-lite gts-issue-sidebar-fields">
+        <%= f.input :state, :collection => states %>
+        <%= f.input :priority, :collection => priorities %>
+        <%= f.input :milestone_id, :collection => milestones %>
+        <hr/>
+        <%= render 'issues/issues/form/assignee_widget', :issue => issue, :f => f %>
+        <hr/>
+        <%= render 'issues/issues/form/label_widget', :issue => issue, :f => f %>
+      </div>
+    </div>
+  </div>
+  <div class="form-actions form-actions-left">
+    <%= f.submit_button %>
+  </div>
+<% end %>

@@ -1,0 +1,68 @@
+<%= simple_form_for(query, :url => project_issues_path, :method => :get, :html => { :class => 'form-horizontal gts-issue-filters' }) do |f| %>
+  <%= f.input :milestone_id, :collection => query.milestones,
+    :label => 'Milestone', :include_blank => 'No milestone',
+    :required => false, :input_html => { :name => :milestone_id } %>
+  <div class="control-group">
+    <%= f.label 'State', :required => false %>
+    <div class="controls">
+      <ul class="issue-states gts-filter-buttons">
+        <% query.states.each do |state| %>
+          <li>
+          <%= label_button(state, :tag => :label, :for => "state-#{state.downcase}", :active => query.state_active?(state)) do %>
+            <%= check_box_tag('state_ids[]', state, query.state_active?(state), :id => "state-#{state.downcase}") %>
+          <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label 'Priority', :required => false %>
+    <div class="controls">
+      <ul class="issue-priorities gts-filter-buttons">
+        <% query.priorities.each do |id, name| %>
+          <li>
+            <%= label_button(name, :tag => :label, :for => "priority-#{id}", :active => query.priority_active?(id)) do %>
+              <%= check_box_tag('priority_ids[]', id, query.priority_active?(id), :id => "priority-#{id}") %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= f.label 'Labels', :required => false %>
+    <div class="controls">
+      <ul class="issue-labels gts-filter-buttons">
+        <% query.labels.each do |label| %>
+          <li>
+            <%= label_button(label.name, :tag => :label, :for => "label-#{label.id}", :color => label.color, :active => query.label_active?(label)) do %>
+              <%= check_box_tag('label_ids[]', label.id, query.label_active?(label), :id => "label-#{label.id}") %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="pull-right">
+        <% if logged_in? %>
+          <% if query.active? && controller_name != 'queries' %>
+            <%= link_to 'Save this query', '#save-query-modal', 'data-toggle' => 'modal', :class => 'btn' %>
+          <% end %>
+        <% end %>
+        <span data-behavior="submit-buttons">
+          <%= link_to 'Show all', project_issues_path, :class => 'btn', :data => { :behavior => 'reset' } %>
+          <%= link_to 'Filter', project_issues_path, :class => 'btn btn-primary', :data => { :behavior => 'filter' } %>
+        </span>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if logged_in? %>
+  <%= modal_box 'Save current issue query', 'save-query-modal' do %>
+    <%= render 'issues/queries/form', :query => query %>
+  <% end %>
+<% end %>

@@ -1,0 +1,6 @@
+address: smtp.example.com
+port: 25
+authentication: plain
+user_name: username
+password: secret
+enable_starttls_auto: true

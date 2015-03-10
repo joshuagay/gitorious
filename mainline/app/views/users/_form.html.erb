@@ -1,0 +1,35 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<fieldset>
+  <%= form.input :login, :label => t(:login, :scope => "activerecord.attributes.user"),
+    :input_html => { :class => "input-xlarge" } %>
+  <%= form.input :email, :label => t(:email, :scope => "activerecord.attributes.user"),
+    :input_html => { :class => "input-xlarge" } %>
+  <%= form.input :password, :label => t(:password, :scope => "activerecord.attributes.user"),
+    :input_html => { :class => "input-xlarge" } %>
+  <%= form.input :password_confirmation, :label => t(:password_confirmation, :scope => "activerecord.attributes.user"),
+    :input_html => { :class => "input-xlarge" } %>
+  <%= form.input :terms_of_use, :as => :boolean, :label => false, :inline_label => "I accept the #{render "licenses/tos_link"}".html_safe %>
+  <div class="form-actions">
+    <%= form.submit "Sign up", :class => 'btn btn-primary' %>
+  </div>
+</fieldset>

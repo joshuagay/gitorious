@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+# copy config files for Rails app
+/usr/local/bin/copy-configs
+
+# fix ownership of "log" and "tmp" directories so Rails app can write to them
+/usr/local/bin/fix-ownerships
+
+# ensure existence of repositories dir
+/usr/local/bin/create-repositories-dir
+
+# ensure existence of other data dirs
+mkdir -p /srv/gitorious/data/tarballs-work /srv/gitorious/data/tarballs-cache /srv/gitorious/data/uploads
+chown git:git /srv/gitorious/data/tarballs-work /srv/gitorious/data/tarballs-cache /srv/gitorious/data/uploads
+
+# tell Rails app to write authorized_keys file to data volume
+# (so host's sshd can access it)
+export GITORIOUS_AUTHORIZED_KEYS_PATH="/srv/gitorious/data/.ssh/authorized_keys"
+
+# execute the given command as git user in app dir
+cd /srv/gitorious/app && exec sudo -E -H -u git "$@"

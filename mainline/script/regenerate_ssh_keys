@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+require "pathname"
+
+RAILS_ENV = ENV['RAILS_ENV'] ||= 'production'
+
+filename = ARGV[0]
+
+rails_root = (Pathname(__FILE__) + "../../")
+Dir.chdir(rails_root)
+require "./config/environment"
+
+SshKeyFile.regenerate(filename)

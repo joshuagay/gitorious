@@ -1,0 +1,51 @@
+<%
+#--
+#   Copyright (C) 2012-2013 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+<div class="row-fluid user-profile not-dash">
+  <div class="span2">
+    <%= link_to(avatar(user, :version => :medium, :size => '128'), user, :class => "avatar") %>
+  </div>
+  <div class="span8">
+    <div class="profile-data">
+      <h1>
+        <%= link_to h(user.login), user %>
+      </h1>
+      <ul class="details unstyled">
+        <% if user.fullname.present? %>
+          <li>
+            <strong><%= h(user.fullname) %></strong>
+          </li>
+        <% end %>
+        <% if user.public_email? %>
+          <li class="email">
+            <%= mail_to(user.email, mangled_mail(user.email), :encode => "javascript") %>
+          </li>
+        <% end %>
+        <% if user.url %>
+          <li>
+            <a rel="me" href="<%=h user.url %>"><%=h user.url %></a>
+          </li>
+        <% end %>
+        <li>
+          <%= t("views.users.member_for") %> <%= time_ago_in_words(user.created_at) %>
+          <% if user.suspended? %>(suspended)<% end %>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

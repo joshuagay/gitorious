@@ -1,0 +1,61 @@
+<%
+#--
+#   Copyright (C) 2012-2013 Gitorious AS
+#   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<% users_by_email = Repository.users_by_commits(commits) %>
+<% no_pagination ||= false -%>
+<% commits.group_by{|c| l(c.committed_date, :format => :human) }.each do |day, commits| -%>
+  <p class="gts-date-heading"><%= day -%></p>
+  <% commits.each do |commit| -%>
+    <% user = users_by_email[commit.author.email] %>
+    <div class="gts-commit <%= commit.merge? ? 'merge_commit' : 'commit' -%>">
+      <p class="gts-log-message">
+        <% if repository.internal? %>
+          <strong><%= h(commit.id_abbrev) -%></strong>:
+        <% else %>
+          <%= link_to h(commit.id_abbrev), project_repository_commit_path(repository.project, repository, commit.id) -%>:
+        <% end %>
+        <%= commit.short_message.force_utf8 -%>
+      </p>
+      <p>
+        <%= avatar_from_email(commit.author.email, :size => 16)  %>
+        <% if user %>
+          <%= link_to(user.fullname || user.login, user_path(user)) %>
+        <% elsif commit.author.name %>
+          <%= h(commit.author.name.force_utf8) -%>
+        <% elsif commit.author.email %>
+          <%= h(commit.author.email.force_utf8) -%>
+        <% end %>
+        <span class="event-time"><%= l(commit.committed_date, :format => :short_time) %></span>
+      </p>
+      <% if defined?(display_diffs) && display_diffs %>
+        <div class="diff">
+          <% commit.diffs.each do |file| -%>
+            <%# TODO! Replace with renderer.render(file) %>
+            <%# render_inline_diff2(file.diff) -%>
+          <% end -%>
+        </div>
+      <% end %>
+    </div>
+  <% end -%>
+<% end -%>
+
+<% unless no_pagination -%>
+  <%= raw JustPaginate.page_navigation(page, total_pages) { |page_no| "?page=#{page_no}" } -%>
+<% end -%>

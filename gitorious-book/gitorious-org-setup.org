@@ -1,0 +1,370 @@
+* The setup on gitorious.org
+  As you probably know, gitorious.org runs the exact same version of
+  the Gitorious mainline repository as distributed on
+  gitorious.org. The setup we're running on those servers may be a bit
+  more complex than what you need to setup yourself, but in case
+  you're curious or plan to operate a Gitorious site with hundreds of
+  thousands of users, this chapter is for you.
+
+** Deployment
+   We use [[https://github.com/capistrano/capistrano/wiki][Capistrano]] to deploy to the gitorious.org servers. We keep
+   our Capfile and deploy.rb in a separate Git repository, and deploy
+   from that repository.
+
+   The configuration files for the gitorious.org servers
+   (database.yml, gitorious.yml etc) are kept in this repository and
+   pushed (via Capistrano's =upload= task) to the =app/shared=
+   directory on the server after the code is updated; which in turn
+   are symlinked into =app/current/config=. The rest of the deployment
+   process is fairly standard; but we have added Capistrano tasks for
+   starting/stopping/re-indexing Thinking Sphinx, starting/stopping
+   Resque workers etc.
+
+   Our Sphinx tasks look like this:
+#+BEGIN_SRC ruby
+  namespace :sphinx do
+    desc "Configure Thinking Sphinx"
+    task :configure, :roles => :app do
+      run "sudo #{current_path}/bin/rake ts:configure"
+    end
+
+    desc "Update Index"
+    task :update_index, :roles => :app do
+      run "sudo #{current_path}/bin/rake ts:reindex"
+    end
+
+    desc "Stop Sphinx"
+    task :stop, :roles => :app do
+      run "sudo #{current_path}/bin/rake ts:stop"
+    end
+
+    desc "Start Sphinx"
+    task :start, :roles => :app do
+      run "sudo #{current_path}/bin/rake ts:start"
+    end
+
+    desc "Restart Sphinx"
+    task :restart, :roles => :app do
+      run "sudo #{current_path}/bin/rake ts:restart"
+    end
+  end
+
+#+END_SRC
+
+   While the Capistrano recipes for controlling Resque are quite
+   minimal (they simply call Upstart's =status= command, since our
+   Resque workers are managed by Upstart:
+
+#+BEGIN_SRC ruby
+  namespace :resque do
+    desc "Restart the resque workers"
+    task :restart, :roles => :app do
+      run "sudo /sbin/restart gitorious/resque-worker"
+    end
+
+    desc "Status of resque workers"
+    task :status, :roles => :app do
+      run "/sbin/status gitorious/resque-worker"
+    end
+  end
+#+END_SRC
+
+   The =restart= task we use is a bit special. Since we use Unicorn
+   (more on that later), we don't do the =touch tmp/restart.txt=
+   maneuver, and we want to reindex the search index after
+   deploying. In our previous setup we ran the indexing from
+   Capistrano, which caused some really long-running deployments with
+   a lot of output. Our current =restart= task emits an Upstart event
+   which triggers a =post-deploy= Upstart task to run on the
+   server. The last action performed is to send a USR2 to the Unicorn
+   master, which results in reloading the server. When the
+   =post-deploy= process has ended on the server, a deployment report
+   is sent by email to us with a result of what happened (still work
+   is still not 100% done).
+
+** Web servers
+   Our web/app server setup looks like this:
+
+*** Varnish
+    We run [[https://www.varnish-cache.org/][Varnish]] for caching on gitorious.org. Varnish is basically
+    a zero-config setup, and will do wonderful things to the
+    responsiveness of your app provided you take care of two things:
+
+    - Any request with a =Set-Cookie= response header will not be cached
+      by Varnish
+    - As long as the =Cache-Control= response header is set to public,
+      Varnish will cache the request for as long as specified by the
+      =max-age= parameter.
+
+    Varnish is set up to handle port 80 (HTTP) on our servers, and is
+    set up with a single backend: the private Nginx server mentioned
+    below. This means that Varnish will cache as much as it can of any
+    requests on port 80 of gitorious.org.
+
+*** Nginx
+    We run [[http://nginx.org/][Nginx]] on port 443, since Varnish doesn't run SSL. The
+    server running on gitorious.org:443 will serve any static files
+    directly from =Rails.root= on the server, and proxy any other
+    request to the public Varnish server on port 80. By sending these
+    requests through Varnish, we get to use the same cache for HTTP
+    and HTTPS.
+
+    Nginx is also set up to listen on a private port, where it
+    receives requests from (only) Varnish. Like the HTTPS Nginx
+    server, this will deliver any static assets directly, and pass all
+    other requests over a UNIX socket to Unicorn.
+
+    Nginx is also set up to deliver sending of other files,
+    intercepting the =X-Accel-Redirect= response headers emitted by
+    Gitorious; equivalent of Apache mod_x_sendfile's =X-Sendfile=
+    headers. To enable this, we have =frontend_server:nginx= in the
+    =gitorious.yml= file on gitorious.org, and the configuration in
+    Nginx looks like this:
+
+#+BEGIN_SRC conf
+  # Will deliver /srv/gitorious/tarballs-cache/filename.tar.gz
+  location /tarballs/ {
+    internal;
+    alias /srv/gitorious/tarballs-cache/;
+  }
+
+  location /git-http/ {
+    internal;
+    alias /srv/gitorious/repositories/;
+  }
+#+END_SRC
+
+    If a user requests
+    https://gitorious.org/gitorious/mainline/archive-tarball/master
+    Gitorious will (once the tarball has been generated) respond with
+    an =X-Accel-Redirect= header like
+    =/tarballs/gitorious-mainline-$sha1.tar.gz= (=$sha1= is which SHA1
+    the master branch points to at request time), which is picked up
+    by Nginx by the first rule above. Nginx will resolve this to the
+    file =/srv/gitorious/tarballs-cache/$sha1.tar.gz= and deliver this
+    file directly.
+
+    The =/tarballs/= locations are marked as private in Nginx, which
+    means a user isn't allowed to request them directly. Using Apache
+    with =mod_x_sendfile= the =X-Sendfile= header would contain the
+    full path to the repository, while Nginx lets us maintain a
+    symbolic mapping resolved by Nginx itself.
+
+    The same mechanism is used for Git over HTTP.
+
+*** Unicorn
+    [[http://unicorn.bogomips.org/][Unicorn]] is a Ruby based HTTP server leaning heavily on fundamental
+    UNIX concepts. Unicorn works by starting a master process which
+    loads the full Rails environment. Once this is done, it will run
+    fork(2) to create 16 child processes (this is how many workers we
+    have running on gitorious.org). These child processes will inherit
+    the socket set up by the master process, which means the kernel
+    will take care of load balancing the requests between the active
+    worker processes.
+
+    Unicorn is designed for chaotic situations, like the one we have
+    on gitorious.org. An IO intensive application like Gitorious will
+    run into problematic situations caused by things like IO load all
+    the time, and our previous setup (Apache and Passenger) would end
+    up with some really CPU and memory hungry processes running for a
+    long time. Our Unicorn setup has a strict timeout of 30 seconds
+    for any request, which means that any request that takes more than
+    30 seconds to complete will cause the worker process to be
+    killed. And once the worker is killed, the master will immediately
+    fork again, with the new child process ready to serve requests
+    right away.
+
+    Like the good UNIX citizen Unicorn is, the easiest way to
+    communicate with it is using signals. We use the following signals
+    on gitorious.org:
+    - We send a USR2 to the master process after deploying a new
+      version of Gitorious. This causes the master process to spawn a
+      new master process; using the newly deployed code. Once the new
+      master is started, it looks for a PID file for the "old" master
+      process in =pid_dir/unicorn.pid.oldbin=. If this file exists, it
+      sends a QUIT signal to that, which causes it do shut down itself
+      and all its worker processes. This gives us a zero downtime
+      deployment, which is a big deal for us.
+    - We send a USR1 to the master process after rotating the logs
+      (done by =logrotate=). This causes the master and worker
+      processes to reopen the log files.
+
+    The Unicorn configuration file we use on gitorious.org is
+    practically identical to the one [[https://gitorious.org/gitorious/mainline/blobs/master/config/unicorn.sample.rb][in Gitorious mainline]], except we
+    use a full path in =RAILS_ROOT= since expanding a relative path
+    would resolve to Capistrano's =app/releases= directory.
+
+*** Git over HTTP (New!)
+    As you may be aware, Git supports two kinds of Git over HTTP. The
+    "dumb" protocol, which basically creates an HTTP request for every
+    commit, and "smart" HTTP which uses HTTP as a carrier for
+    git-upload-pack. The git-scm.com site [[http://git-scm.com/2010/03/04/smart-http.html][has all the details.]]
+
+    Gitorious ships with a simplistic version of the former, a Rails
+    metal which uses Nginx' =X-Accel-Redirect= or Apache's
+    =X-Sendfile= to deliver Git objects directly from the file
+    system. This method is inefficient and somewhat error-prone, but
+    after setting up the new servers last week the stability of this
+    solution was not near good enough.
+
+    Friday afternoon we set up another backend for Git over HTTP,
+    using a Jgit based servlet for doing Git over HTTP. I ran it using
+    Maven for a few hours, after setting up Varnish to proxy traffic
+    to git.gitorious.org to this Java app. This speeded up HTTP
+    cloning a lot, so we decided to run it through the weekend.
+
+    After running it for around 48 hours the Jetty server was using
+    around 5 GB of (resident) RAM, having served around 80.000 git
+    clone operations through the weekend.
+
+    The app we're running for this is a single Java webapp, and the
+    source code is at
+    https://gitorious.org/gitorious/jgit-http-server. We're working on
+    a push+pull implementation in Jruby, also using JGit, but we
+    really like the way Java and Jgit works for us.
+** Message queue and consumers
+   gitorious.org has been using [[http://activemq.apache.org/][Apache ActiveMQ]] since 2009, and we
+   have not had a single problem with using that. No messages dropped,
+   no crashes, no problems at all. The [[http://code.google.com/p/activemessaging/wiki/ActiveMessaging][ActiveMessaging]] Rails plugin
+   we've been running with, however, has never worked really
+   well. Some considerable memory leaks forced us to use [[http://mmonit.com/monit/][Monit]] to kill
+   =script/poller= processes consuming more than a few hundred
+   megabytes of RAM, and killing these processes has often led to
+   zombie processes on the server; potentially even zombies still
+   connected to ActiveMQ.
+
+   When setting up the new servers for gitorious.org we chose to go
+   with [[https://github.com/defunkt/resque][Resque]] instead, which has been supported in Gitorious for a
+   year or so. Resque uses the [[http://redis.io/][Redis key-value store]] as its
+   queue. Resque works similarly to Unicorn by setting up a master
+   worker polling for new messages from Redis and forking a child
+   process to process each message. Once the child is done processing
+   it exits, which means we don't leak memory.
+
+   Switching to Redis/Resque is done in a few simple steps:
+
+*** Install Redis
+    On Ubuntu/Debian servers:
+#+BEGIN_SRC shell-script
+  sudo apt-get install redis-server
+  update-rc.d redis-server defaults
+  sudo service start redis-server
+#+END_SRC
+
+    On RHEL/CentOS-like systems:
+#+BEGIN_EXAMPLE
+sudo yum install redis
+sudo chkconfig redis on
+sudo /etc/init.d/redis start
+#+END_EXAMPLE
+
+*** Configure Gitorious to use Resque
+    This is a simple setting in gitorious.yml:
+#+BEGIN_SRC yaml
+messaging_adapter: resque
+#+END_SRC
+
+*** Restart the app server
+    This depends on which server you're running. If you're using Passenger:
+#+BEGIN_EXAMPLE
+touch tmp/restart.txt
+#+END_EXAMPLE
+
+    If you're using Unicorn
+
+#+BEGIN_EXAMPLE
+kill -USR2 /path/to/unicorn.pid
+#+END_EXAMPLE
+
+*** Start a worker
+    The =bin/rake= script shipping with Gitorious will run a rake task
+    from anywhere, setting up the correct =RAILS_ENV=, =HOME=
+    environment variables and ensuring the task is run as the user
+    specified as =gitorious_user= in =gitorious.yml=, and Resque
+    workers are run with Rake:
+
+#+BEGIN_EXAMPLE
+QUEUE=* /path/to/gitorious/bin/rake resque:work
+#+END_EXAMPLE
+
+    To run dedicated workers for single queues, change the =QUEUE=
+    environment variable, eg.
+
+#+BEGIN_EXAMPLE
+QUEUE="/queue/GitoriousPush" /path/to/gitorious/bin/rake resque:work
+#+END_EXAMPLE
+
+    Since the =bin/rake= task can be called directly, we simply added
+    an Upstart script with an =exec= stanza (no shell required) to
+    control the Resque workers:
+
+#+BEGIN_SRC conf
+description "Run a Resque worker on all queues"
+author "Marius Mårnes Mathiesen <marius@gitorious.com>"
+
+start on started gitorious/unicorn
+stop on runlevel [06]
+
+env QUEUE=*
+env PIDFILE=/path/to/gitorious/pids/resque-worker1.pid
+exec /path/to/gitorious/bin/rake resque:work
+
+#+END_SRC
+
+** Init scripts and process babysitting
+   We're still a little on the fence with regards to
+   babysitting/monitoring processes. Our experience with
+   ActiveMessaging has made us set up Monit, but we're not using it
+   yet. We start all the services using some really simple Upstart
+   scripts. This was the main motivation for shipping the =bin/=
+   scripts with Gitorious, since these set up everything themselves we
+   don't need to spawn a shell to start them (eg. to set up
+   environment variables, dropping privileges etc.). Spawning a shell
+   would confuse Upstart, which relies on counting fork calls and
+   keeping track of PID files.
+
+   In particular, the way Unicorn is used for hot deployment would
+   lead Upstart to try to track the PID of the old master once a new
+   master was started. Instructing Upstart to =respawn= Unicorn would
+   get us into trouble when using the =USR2= technique to reload
+   Unicorn.
+
+   Monit keeps track of PID files, which would work better with
+   Unicorn.
+
+** Git proxying
+   We run a stack of native git daemon processes listening on port
+   9400 on the servers, and have set up Gitorious' git-proxy script to
+   proxy requests to these (this proxy will translate the incoming
+   paths to the paths on the file system before passing them on to the
+   native git daemons). The git-proxy process listens on 127.0.0.1:9418.
+
+   We've set up [[http://haproxy.1wt.eu/][HAProxy]] in front of the git-proxy process, listening
+   on the public interfaces (gitorious.org:9418, ssh.gitorious.org:443
+   and 2a02:c0:1014::1:9418). Running haproxy in front of these may
+   not be strictly necessary, but we found it easier to set up the
+   public facing addresses/ports to listen to in the HAProxy
+   configuration; and we're a little more comfortable running HAProxy
+   to the public as it gives us fine-grained control over
+   server/client timeouts.
+
+   Again, we used Upstart to start the git:// protocol handlers, since
+   Upstart lets us specify the dependency between them. Our
+   git-daemons Upstart recipe is set up like this:
+
+#+BEGIN_SRC conf
+start on started gitorious/unicorn
+#+END_SRC
+
+   which means it's started once the Unicorn process is running. The
+   Upstart recipe for our git-proxy, which requires the git-daemons to
+   be running, is like this.
+
+#+BEGIN_SRC conf
+start on started gitorious/git-daemons
+stop on stopped gitorious/git-daemons
+#+END_SRC
+
+   This way the native git daemons will be started as soon as the web
+   app is ready, and the git proxy will be started once the git
+   daemons are ready.

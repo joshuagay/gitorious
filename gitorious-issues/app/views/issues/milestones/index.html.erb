@@ -1,0 +1,22 @@
+<div id="gts-pjax-container">
+  <div class="gts-pjax pull-right">
+    <%= link_to 'Add milestone', new_project_issue_milestone_path(project), :class => 'btn btn-primary' %>
+  </div>
+  <h2 class="gts-legend">
+    Milestones
+  </h2>
+  <table class="table table-stripped gts-table gts-project-issue-milestones">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Issue count</th>
+        <th>Due date</th>
+        <th>Created at</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody class="gts-tbody-actions gts-delete-links">
+      <%= render milestones %>
+    </tbody>
+  </table>
+</div>

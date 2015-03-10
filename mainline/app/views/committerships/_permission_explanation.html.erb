@@ -1,0 +1,47 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #d5d5d5;">
+  <h4>What does the permissions mean?</h4>
+  <p>Permissions do not cascade down — a committer is not automatically a reviewer</p>
+  <div class="row-fluid">
+    <div class="span4">
+      <h5>Reviewers:</h5>
+      <ul>
+        <li>Can update merge request statuses</li>
+        <li>Will receive notifications on new merge requests</li>
+      </ul>
+    </div>
+    <div class="span4">
+      <h5>Committers:</h5>
+      <ul>
+        <li>Can push commits to the repository</li>
+      </ul>
+    </div>
+    <div class="span4">
+      <h5>Administrators:</h5>
+      <ul>
+        <li>Can edit the repository name, description and settings</li>
+        <li>Can manage collaborators</li>
+        <li>Can delete the repository</li>
+      </ul>
+    </div>
+  </div>
+</div>

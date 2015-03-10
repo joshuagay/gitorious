@@ -1,0 +1,45 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<div class="gts-site-header gts-new-repo" data-gts-env-repository-view-state-path="/users/view_state/repository/<%= repository.id %>.json">
+  <div class="container">
+    <div class="row">
+      <h1 class="span">
+        <a href="<%= project_path(repository.project) %>"><%= repository.project.slug %></a> /
+        <span><%= repository.name %></span>
+      </h1>
+    </div>
+    <div class="gts-repository-admin-ph gts-placeholder"></div>
+    <%= description(repository.project) %>
+    <div class="row">
+      <div class="alert alert-info span6">
+        <h2>Your new repository is being created</h2>
+        <p>
+          This page will be reloaded when your repository is created.
+          If the page doesn't reload after a few seconds,
+          try <a href="">reloading it</a>.
+        </p>
+        <p>
+          If this message persists for more than a few minutes,
+          contact
+          <a href="mailto:<%= Gitorious.support_email %>"><%= Gitorious.support_email %></a>.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+fqdn=$(hostname -f)
+echo $fqdn >/etc/mailname
+postconf -e myhostname=$fqdn
+
+/etc/init.d/postfix start
+
+while true; do sleep 100; done

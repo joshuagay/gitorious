@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= "#{@page_title} - " if @page_title %> Gitorious.org status</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="keywords" content="status,gitorious,uptime">
+    <meta name="description" content="Uptime and current status for gitorious.org">
+    <link href="/stylesheets/gitorious.css" media="screen,projection,handheld" type="text/css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="logo">
+      <a href="http://gitorious.org/">
+        <%=  image_tag("logo.png", :size => "180x51", :alt => "Gitorious") %>
+      </a>
+    </div>
+    <div id="content">
+      <%= yield %>
+    </div>
+    <div id="footer">
+      <div id="footer-links">
+	<h3>Gitorious</h3>
+	<ul>
+	  <li><%= link_to("Public uptime report","http://stats.pingdom.com/83w3nssocvlk/265890", :title => "Public Pingdom report for gitorious.org") -%></li>
+	</ul>
+	<ul>
+	  <li><a href="http://gitorious.org/">Gitorious.org</a></li>
+	  <li><a href="http://gitorious.org/about">About Gitorious</a></li>
+        </ul>
+        <ul>
+	  <li><a href="http://gitorious.org/about/faq">FAQ</a></li>
+	  <li><a href="http://gitorious.org/contact">Contact</a></li>
+	</ul>
+	<ul>
+	  <li><a href="http://groups.google.com/group/gitorious">Discussion group</a></li>
+	  <li><a href="http://blog.gitorious.org">Blog</a></li>
+	</ul>
+      </div>
+      <div class="clear"></div>
+    </div>
+    <script type="text/javascript">
+      var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-52238-5']);_gaq.push(['_trackPageview']);(function(d){var ga=d.createElement('script');ga.type='text/javascript';ga.async=true;ga.src=('https:'==d.location.protocol?'https://ssl':'http://www')+'.google-analytics.com/ga.js';var s=d.getElementsByTagName('script')[0];s.parentNode.insertBefore(ga,s);})(document);
+    </script>
+  </body>
+</html>

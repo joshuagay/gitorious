@@ -1,0 +1,8 @@
+<%= gts_form_for([project, :issue, milestone]) do |f| %>
+  <%= f.input :name %>
+  <%= f.input :description %>
+  <%= f.input :due_date, :as => :string, :input_html => { :class => 'gts-date-picker' } %>
+  <%= f.actions do %>
+    <%= f.submit_button %>
+  <% end %>
+<% end %>

@@ -1,0 +1,67 @@
+<%#
+  # encoding: utf-8
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+%>
+<div class="container gts-body">
+  <%
+    @title = "#{path == '' ? './' : path} in #{repository_slug} (#{ref})"
+    levels = accumulate_path(partition_path(path, respond_to?(:maxdepth) ? maxdepth : nil))
+    %>
+  <div class="gts-ref-selector-ph"></div>
+  <table class="table table-striped gts-tree-explorer" data-gts-env-tree-history-url="<%= tree_history_url(repository_slug, ref, path) %>">
+    <thead>
+      <tr>
+        <th colspan="<%= tree_table_padding_width(levels) + 1 %>">File</th>
+        <th class="gts-col-changed">Changed</th>
+        <th class="gts-col-commit" colspan="2">Last commit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= tree_context(repository_slug, ref, levels) %>
+      <% tree_entries(tree).each do |object| %>
+        <tr>
+          <%= tree_table_padding_td(levels) %>
+          <td class="gts-name">
+            <a href="<%= object_url(repository_slug, ref, path, object) %>">
+              <i class="icon <%= object_icon_class(object) %>"></i>
+              <%= object[:name] %>
+            </a>
+          </td>
+          <td class="gts-commit-date"></td>
+          <td class="gts-commit-oid"></td>
+          <td></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% if readme %>
+    <div class="gts-readme" id="readme">
+      <div class="gts-page-header">
+        <h4><%= readme[:path] %></h4>
+      </div>
+      <% begin %>
+        <%= format_blob(readme[:path], readme[:blob].text(nil, defined?(Encoding) ? Encoding.default_external : nil), repository_slug, ref) %>
+      <% rescue StandardError => err %>
+        <p>
+          <em>Failed to render <%= readme[:path] %></em>
+          <!-- <%= err.message %> -->
+        </p>
+      <% end %>
+    </div>
+  <% end %>
+</div>

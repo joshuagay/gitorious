@@ -1,0 +1,71 @@
+<%
+  #--
+  #   Copyright (C) 2011-2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<%= content_for :head do %>
+  <%= stylesheet_link_tag 'public_index' %>
+<% end %>
+
+<div class="intro-container">
+  <div class="container">
+    <div class="row-fluid">
+      <div class="span6">
+        <%= render "site/public_index/intro" %>
+      </div>
+      <div class="span6">
+        <div id="screenshots-rotator">
+          <div id="screenshotsnavigation"></div>
+          <div id="screenshots-container">
+            <%= image_tag '/assets/external/screens/gts_v3_01.jpg' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="cta-container">
+  <div class="container">
+    <%= render "site/public_index/cta" %>
+  </div>
+</div>
+<div class="features-container">
+  <div class="container">
+    <div class="row-fluid">
+      <%= render "site/public_index/features" %>
+    </div>
+    <div class="row-fluid">
+      <%= render "site/public_index/commercial" %>
+    </div>
+  </div>
+</div>
+<div class="promo-container">
+  <div class="container">
+    <div class="row-fluid">
+      <div class="span5">
+        <%= render "site/public_index/testimonials" %>
+      </div>
+      <div class="span4">
+        <%= render "site/public_index/search_projects" %>
+        <%= render "site/public_index/featured_projects" %>
+      </div>
+      <div class="span3">
+        <%= render "site/public_index/blog_feed" if Gitorious.dot_org? %>
+      </div>
+    </div>
+  </div>
+</div>

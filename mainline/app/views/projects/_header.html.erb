@@ -1,0 +1,41 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+%>
+
+<% @body_class = "gts-private" if project.private?  %>
+
+<%= site_header :data => { 'gts-env-project-view-state-path' => main_app.project_view_state_users_path(project, :format => "json") } do %>
+  <h2>
+    <%= link_to(project.title, main_app.project_path(project)) %>
+  </h2>
+  <%= render "projects/links", :project => project %>
+  <div class="gts-markup">
+    <%= render_markdown(project.description).html_safe %>
+  </div>
+  <ul class="nav nav-tabs gts-header-nav gts-pjax" <%= "data-gts-active=#{defined?(active) && active.to_s}" %>>
+    <%= options = [[:activities, main_app.project_path(project), "Activities"]]
+        options << [:merge_requests, main_app.project_merge_requests_path(project), "Merge Requests <span class=\"count\">(#{project.open_merge_request_count})</span>"]
+        if project.feature_enabled?(:issues)
+          options << [:issues, issues_app.project_issues_path(project), "Issues"]
+        end
+        options << [:wiki, main_app.project_page_path(project, "Home"), "Wiki"] if project.wiki_enabled?
+        options << [:community, main_app.project_community_path(project), "Community"]
+        header_navigation(options, :active => defined?(active) ? active : nil) %>
+    <li class="gts-project-admin-ph gts-placeholder"></li>
+  </ul>
+<% end %>

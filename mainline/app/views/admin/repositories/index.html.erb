@@ -1,0 +1,49 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2010 Marius Mathiesen <marius@shortcut.no>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<%= partial("admin/shared/header", {
+        :app => Gitorious,
+        :active => :repositories,
+        :title => @title = "Pending repositories",
+        :description => "Occasionally, repositories will be 'stuck' while Gitorious " +
+        "is creating it on disk. Use this page to re-send repository creation messages " +
+        "to retry timed out or otherwise failed messages."
+      }) %>
+
+<div class="container">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Last update</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% repositories.each do |repo| -%>
+        <tr>
+          <td><%= repo.name -%></td>
+          <td><%= repo.updated_at -%></td>
+          <td><%= link_to("Re-post creation message", recreate_admin_repository_path(repo.id), :method => :put) -%></td>
+        </tr>
+      <% end -%>
+    </tbody>
+  </table>
+  <%= raw JustPaginate.page_navigation(page, total_pages) { |n| admin_repositories_path(:page => n) } -%>
+</div>

@@ -1,0 +1,6 @@
+en:
+  issues:
+    index_results:
+      one: "Displaying 1 issue"
+      other: "Displaying %{count} issues"
+      zero: "No issues found"

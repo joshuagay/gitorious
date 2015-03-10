@@ -1,0 +1,57 @@
+<%
+  #--
+  #   Copyright (C) 2012-2014 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<% @title = t("views.logs.title_clean", :repo_url => h(repository.url_path), :ref => h(ref)) %>
+<% content_for(:head) do %>
+  <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url,
+        :title => atom_auto_discovery_title) %>
+<% end %>
+
+<%= repo_header repository, :current_user => current_user, :ref => ref, :active => :commits %>
+
+<div class="container" id="gts-pjax-container">
+  <div class="gts-ref-selector-ph"></div>
+  <ul class="nav nav-tabs">
+    <li class="active"><a>Log</a></li>
+    <li>
+      <%= link_to(project_repository_graph_in_ref_path(repository.project, repository, params[:branch])+"?page=#{page}") do %>
+        Graph <span class="gts-oid"><%= ref %></span>
+      <% end %>
+    </li>
+  </ul>
+  <h2 class="gts-legend">
+    <%= t("views.logs.title_html", :repo_url => h(repository.url_path), :ref => h(ref)) %>
+
+    <div class="pull-right">
+      <%= feed_icon atom_auto_discovery_url %>
+    </div>
+  </h2>
+
+  <%= cache([[repository.project, repository], :commits, ref, commits.current_page], { :expires_in => 10.minutes }) do %>
+    <%= render(:partial => "log", :locals => {
+            :repository => repository,
+            :ref => ref,
+            :commits => commits,
+            :page => page,
+            :total_pages => total_pages,
+            :atom_auto_discovery_url => atom_auto_discovery_url,
+            :atom_auto_discovery_title => atom_auto_discovery_title}) %>
+  <% end %>
+  <script data-gts-env-repository-refs-url="<%= repository_refs_path(:project_id => repository.project, :repository_id => repository) %>"></script>
+</div>

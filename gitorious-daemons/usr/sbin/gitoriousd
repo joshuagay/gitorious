@@ -1,0 +1,121 @@
+#!/bin/sh
+#   Copyright (C) 2013 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+progname="gitoriousd"
+
+# Read /etc/gitorious.conf, expose env vars
+current_dir=$(dirname $0)
+gitorious_conf=$current_dir/../../etc/gitorious.conf
+prefix=$current_dir/../..
+# Look for $PREFIX/gitorious.conf, source if present
+if [ -f $gitorious_conf ]; then
+    . $gitorious_conf
+    export GITORIOUS_HOME
+else
+    echo "gitorious.conf not found, exiting"
+    exit 1
+fi
+
+start(){
+    for app in $(find "$prefix/usr/libexec/$progname" -type f -not -name "*.rb" -executable)
+    do
+	local name=$(basename $app)
+	_checkpid $name && _status_down "Not starting $name" || (_status_ok "Starting $name" && $app)
+    done
+}
+
+_checkpid() {
+    local name=$1
+    local pidfile="$prefix/var/run/$progname/$name.pid"
+    if [ -f $pidfile ]; then
+	pid=$(cat $pidfile 2>/dev/null)
+	ps -p $pid >/dev/null 2>&1
+	exitstatus=$?
+	if [ $exitstatus -eq 0 ]; then
+	    return 0
+	else
+	    return 1
+	fi
+    else
+	return 1
+    fi
+}
+
+status(){
+    for path in $(find "$prefix/usr/libexec/$progname" -not -name "*.rb" -type f -executable)
+    do
+	local name=$(basename $path)
+	_checkpid $name && _status_ok "$name" || _status_down "$name"
+    done
+}
+
+_status_ok() {
+    printf "%-50s \033[1;32m %s \033[0m\n" "$1" [UP]
+}
+
+_status_down() {
+    printf "%-50s \033[1;31m %s \033[0m\n" "$1" [DOWN]
+}
+
+_signal_all(){
+    local signal=$1
+    for app in $(find "$prefix/usr/libexec/$progname" -type f -not -name "*.rb" -executable)
+    do
+	local name=$(basename $app)
+	local pidfile="$prefix/var/run/$progname/$name.pid"
+	if [ -f $pidfile ]; then
+	    local pid=$(cat $pidfile 2>/dev/null)
+	    if [ "$signal" == "QUIT" ]; then
+		_status_ok "Stopping $name"
+	    else
+		/bin/echo "Sending $signal to $pid for process $name"
+	    fi
+	    kill -$signal $pid 2>/dev/null
+	fi
+    done
+}
+
+stop(){
+    _signal_all "QUIT"
+}
+
+reload(){
+    _signal_all "HUP"
+}
+
+restart(){
+    /bin/echo "Restart implemented reliably, using reload instead"
+    reload
+}
+
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    status)
+	status
+	;;
+    restart)
+	restart
+	;;
+    reload)
+	reload
+	;;
+    *)
+	/bin/echo "Usage: $0 {start,stop,restart,status}"
+esac

@@ -1,0 +1,20 @@
+{
+    "id": "http://api.gitorious.org/schema/user#",
+    "$schema": "http://json-schema.org/schema#",
+    "title": "User",
+    "description": "A (limited) user object.",
+    "type": "object",
+    "properties": {
+        "id": { "type": "integer" },
+        "login": { "type": "string" },
+        "name": {
+            "description": "User's full name",
+            "type": "string"
+        },
+        "email": {
+            "description": "User's email, if publicly available",
+            "type": "string"
+        }
+    },
+    "required": ["id", "login"]
+}

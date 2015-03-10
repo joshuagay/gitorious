@@ -1,0 +1,40 @@
+{
+    "id": "http://api.gitorious.org/schema/project-payload#",
+    "$schema": "http://json-schema.org/schema#",
+    "title": "Project creation payload",
+    "description": "A Gitorious project",
+    "type": "object",
+    "properties": {
+        "title": {
+            "description": "The project name",
+            "type": "string"
+        },
+        "slug": {
+            "description": "The name as it will appear in URLs etc.",
+            "type": "string"
+        },
+        "description": {
+            "description": "The project description. May contain markdown and simple HTML",
+            "type": "string"
+        },
+        "license": {
+            "description": "The license name, e.g. 'MIT License'",
+            "type": "string"
+        },
+        "home_url": {
+            "description": "URL to the project's webpage",
+            "type": "string"
+        },
+        "mailinglist_url": {
+            "description": "URL to the project's webpage",
+            "type": "string"
+        },
+        "enable_wiki": {
+            "description": "Whether or not to enable the project wiki",
+            "type": "boolean",
+            "default": true
+        },
+        "owner": { "$ref": "owner" }
+    },
+    "required": ["title", "slug", "description", "owner"]
+}

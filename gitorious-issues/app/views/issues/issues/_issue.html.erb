@@ -1,0 +1,39 @@
+<li class="gts-issue">
+  <div class="gts-issue-header">
+    <span class="pull-right gts-issue-actions">
+      <% if can_edit?(issue) %>
+        <div class="pull-right dropdown">
+          <%= link_to '#', :class => 'dropdown-toggle', 'data-toggle' => 'dropdown' do %>
+            <i class="icon icon-cog"></i>
+          <% end %>
+          <ul class="dropdown-menu">
+            <li>
+              <%= issue.edit_link %>
+            </li>
+            <li>
+              <%= issue.delete_link %>
+            </li>
+          </ul>
+        </div>
+      <% end %>
+    </span>
+  </div>
+  <div class="gts-issue-body">
+    <%= issue.state %>
+    <span class="gts-issue-title-link gts-pjax">
+      <%= issue.title_link %>
+    </span>
+  </div>
+  <div class="gts-issue-footer ui-helper-clearfix">
+    <ul>
+      <li>
+        <%= issue.user_avatar %>
+        <%= issue.user_link %>
+        <%= issue.created_at %>
+      </li>
+      <li class="gts-issue-labels">
+        <%= issue.labels %>
+      </li>
+    </ul>
+  </div>
+</li>

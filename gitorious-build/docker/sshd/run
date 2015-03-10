@@ -1,0 +1,24 @@
+#!/bin/bash
+
+set -e
+
+# copy config files so bin/gitorious can read client_host/port from gitorious.yml
+/usr/local/bin/copy-configs
+
+# fix ownership of "log" directory so bin/gitorious can write logs to it
+/usr/local/bin/fix-ownerships
+
+# ensure existence of repositories dir
+/usr/local/bin/create-repositories-dir
+
+# allow authorization between host's sshd and this container's sshd
+sudo -u git cp /srv/gitorious/data/.ssh/git_id_rsa.pub /home/git/.ssh/authorized_keys
+
+# make sure env vars linking to other containers are available when handling ssh connection
+su git -c "env | grep _PORT_ > /home/git/.ssh/environment"
+
+# make sure symlink to gitorious hooks exists in repositories dir
+ln -nfs /srv/gitorious/app/data/hooks /srv/gitorious/data/repositories/.hooks
+chown -h git:git /srv/gitorious/data/repositories/.hooks
+
+exec "$@"

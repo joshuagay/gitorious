@@ -1,0 +1,61 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2008 Jonas Fonseca <fonseca@diku.dk>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+%>
+
+<% @title = "Edit #{project.title}" %>
+
+<%= render "projects/header", :project => ProjectPresenter.new(project), :active => :admin  %>
+
+<div class="container" id="gts-pjax-container">
+  <%= simple_form_for(project, :builder => Gitorious::View::FormBuilder, :method => project.persisted? ? :put : :post, :html => { :class => "form form-horizontal" }) do |f| %>
+    <fieldset>
+      <legend>Edit project</legend>
+      <%= tabbable %w(basic-info merge-request-statuses), :active => 'basic-info' do %>
+        <%= tab_pane 'basic-info', :active => true do %>
+          <div class="row-fluid">
+            <div class="span8">
+              <%= render 'form', :form => f, :project => project, :edit_slug => false, :edit_urls => true %>
+            </div>
+            <% if Gitorious::Configuration.get("enable_sidebar_license_descriptions") %>
+              <div class="span4">
+                <h3><%= license_label("views.projects") %> overview</h3>
+                <dl>
+                  <% ProjectLicense.all.each do |license| %>
+                    <dt><%= license.name %></dt>
+                    <%=raw "<dd>#{license.description}</dd>" if license.description %></dd>
+                  <% end %>
+                </dl>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+        <%= tab_pane 'merge-request-statuses' do %>
+          <%= render 'projects/edit/merge_request_statuses', :f => f, :project => project %>
+        <% end %>
+        <div class="form-actions">
+          <%= f.submit 'Save', :class => 'btn btn-primary' %> <span class="cancel"><%= link_to 'Cancel', project_path(project) %></span>
+        </div>
+      <% end %>
+    </fieldset>
+  <% end %>
+</div>

@@ -1,0 +1,109 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<% @title = repository.slug %>
+<% content_for(:head) do %>
+  <%= auto_discovery_link_tag(:atom, atom_auto_discovery_url,
+        :title => atom_auto_discovery_title) %>
+<% end %>
+
+<%= repo_header(repository, {
+        :current_user => current_user,
+        :active => :community,
+        :header_level => 2
+      }) %>
+
+<div class="container" id="gts-pjax-container">
+  <div class="row-fluid">
+    <div class="span8">
+      <span class="fluid-row">
+        <% if repository.has_group_clones? %>
+          <span class="span6">
+            <h3 class="gts-legend">
+              <%= t("views.repos.by_teams") %> (<%= repository.group_clone_count %>)
+            </h3>
+            <ul class="unstyled">
+              <% repository.group_clones.each do |repo| %>
+                <%= render 'repositories/repository_sidebar', :repository => repo %>
+              <% end %>
+            </ul>
+          </span>
+        <% end %>
+        <% if repository.has_user_clones? %>
+          <span class="span6">
+            <h3 class="gts-legend">
+              <%= t("views.repos.by_users") %> (<%= repository.user_clone_count %>)
+            </h3>
+            <ul class="unstyled">
+              <% repository.user_clones.each do |repo| %>
+                <%= render 'repositories/repository_sidebar', :repository => repo %>
+              <% end %>
+              <ul>
+          </span>
+        <% end %>
+        <% if !repository.has_user_clones? && !repository.has_group_clones? %>
+          <ul>
+            <li class="hint"><%= t("views.projects.no_clones_yet") %></li>
+          </ul>
+        <% end %>
+      </span>
+    </div>
+    <div class="span4">
+      <table class="table table-striped">
+        <tbody>
+          <tr>
+            <th><%= t("views.repos.owner") %></th>
+            <td>
+              <%= link_to h(repository.owner_to_param_with_prefix), repository.owner %>
+              <% if repository.owned_by_group? && repository.user %>
+                <small class="hint">
+                  (through <%= link_to h(repository.user_to_param_with_prefix), repository.user %>)
+                </small>
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <th><%= t("views.repos.created") %></th>
+            <td><%= repository.short_created_at %></td>
+          </tr>
+          <tr>
+            <th><%= t("views.repos.current_committers") %></th>
+            <td>
+              <ul class="gts-committer-list unstyled">
+                <% repository.user_committers.each do |cs| %>
+                  <li>
+                    <%= avatar_from_email(cs.committer.email, :size => 16, :style => "tiny") %>
+                    <%= link_to h(cs.committer.title), cs.committer %>
+                    <% if repository.user == cs.committer %>
+                      <small class="hint">(<%= t("views.repos.creator") %>)</small>
+                    <% end %>
+                  </li>
+                <% end %>
+                <% repository.group_committers.each do |cs| %>
+                  <li>
+                    <%= committer_group(cs.committer) %>
+                  </li>
+                <% end %>
+              </ul>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

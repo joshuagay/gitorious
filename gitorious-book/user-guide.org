@@ -1,0 +1,11 @@
+#+TITLE:     Gitorious user guide
+#+LINK_UP:   index.html
+#+LINK_HOME: /
+
+* Gitorious user guide
+** TODO Using the web frontend
+*** Registering your user
+*** Adding your ssh key
+*** Creating your first project and repo
+*** Using Gitorious as a git remote
+*** Collaborating with others: merge requests

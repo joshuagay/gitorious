@@ -1,0 +1,11 @@
+# Unless you are developing Gitorious and really know what you are doing,
+# leave the following settings as is.
+repository_base_path: "/tmp/git/repositories"
+archive_cache_dir: "/tmp/git/tarball-cache"
+archive_work_dir: "/tmp/git/tarball-work"
+host: gitorious.test
+scheme: http
+cookie_secret: UpDoquajrecJewyeodMilmiasFicsOke
+messaging_adapter: test
+git_binary: /usr/bin/git
+enable_git_daemon: true

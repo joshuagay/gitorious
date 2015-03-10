@@ -1,0 +1,19 @@
+<% labels = issue.label_candidates.map { |label| { :label => label.name, :id => label.id, :color => label.color } } %>
+
+<%= content_tag :div, :class => 'issue-label-widget autocomplete-widget', :data => { 'gts-env-project-labels' => labels } do %>
+  <%= f.label 'Labels' %>
+  <%= f.input_field :label, :as => :string, :name => 'labels', :value => nil, :placeholder => 'Add label...',
+    :class => 'input-small gts-issue-label' %>
+  <a href="#" class="btn" data-behavior="add-label">Add</a>
+  <ul class="issue-labels">
+    <% issue.labels.each do |label| %>
+      <li>
+        <%= content_tag(:button, :class => 'btn btn-mini btn-label', :style => "background-color: #{label.color}") do %>
+          <i class="icon-remove icon-white"></i>
+          <%= label.name %>
+        <% end %>
+        <input type="hidden" name="issue[label_ids][]" value="<%= label.id %>"/>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

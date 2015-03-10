@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Fake "git http-backend" command (cgi script), used to check env variables.
+
+[[ $1 == "http-backend" ]] || exit 1
+
+echo -e "Content-type: text/plain\n"
+
+env | egrep "PATH_TRANSLATED|QUERY_STRING|REMOTE_USER|GIT_HTTP_EXPORT_ALL" | sort

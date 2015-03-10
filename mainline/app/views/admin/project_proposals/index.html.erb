@@ -1,0 +1,59 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<%= partial("admin/shared/header", {
+        :app => Gitorious,
+        :active => :project_proposals,
+        :title => @title = "Pending project proposals",
+        :description => "Project proposals that have yet to be approved."
+      }) %>
+
+<div class="container">
+  <% if ProjectProposal.enabled? %>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Creator</th>
+          <th>Description</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% proposals.each do |p| %>
+          <tr>
+            <td><%= p.title %></td>
+            <td>~<%= link_to h(p.creator.login), p.creator -%></td>
+            <td><%= p.description %></td>
+            <td><%= button_to "Approve", :action => "approve", :id => p.to_param %></td>
+            <td><%= button_to "Reject", :action => "reject", :id => p.to_param %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p>
+      Project proposals are not enabled for <%= Gitorious.site_name %>. To
+      enable, set <code>enable_project_approvals</code> to <code>true</code> in
+      config/gitorious.yml. When project proposals are enabled, users can not
+      create projects on their own, only proposals. An admin must then approve
+      the proposal in order for the project to be created.
+    </p>
+  <% end %>
+</div>

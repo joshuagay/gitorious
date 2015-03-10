@@ -1,0 +1,1033 @@
+#+TITLE:     Gitorious administration guide
+#+LINK_UP:   index.html
+#+LINK_HOME: /
+
+* Gitorious administration guide
+** TODO How Gitorious works
+*** Overview: services, processes, packages
+*** How the web frontend works
+    Briefly describe Rails/web architecture
+*** How the git backend works
+File structure, how we handle incoming ssh/git operations, the gitorious script
+
+** Installation
+*** Automated installation
+*** Manual installation
+**** Overview - common steps
+
+**** CentOS / RHEL
+**** Debian / Ubuntu
+*** Case study: Gitorious.org
+    Read about the [[file:gitorious-org-setup.org::*The%20setup%20on%20gitorious.org][The setup on gitorious.org]]
+*** Installing without direct Internet access
+   To install Gitorious without direct access to the Internet, we
+   need to do some legwork. Assuming our http proxy is on
+   =http://10.0.0.30:3128/= we need to let Git and Bundler/Rubygems
+   work through the proxy. We also need to make sure we're only
+   using http(s) git URLs.
+
+   Start off by entering the Gitorious root directory
+
+#+BEGIN_EXAMPLE
+cd /var/www/gitorious/app
+#+END_EXAMPLE
+
+**** First, make sure the Gitorious =origin= remote uses HTTPS
+     SSH or Git URLs won't work:
+
+#+BEGIN_EXAMPLE
+git remote set-url origin https://git.gitorious.org/gitorious/mainline.git
+#+END_EXAMPLE
+
+**** Next, make git use a proxy
+     We'll use the =--global= flag to =git config= so the proxy is
+     used for submodules too:
+
+#+BEGIN_EXAMPLE
+git config --global http.proxy http://10.0.0.30:3128/
+#+END_EXAMPLE
+
+**** Fetch and merge the latest release tag
+#+BEGIN_EXAMPLE
+git fetch
+git merge v2.4.12
+#+END_EXAMPLE
+
+**** Update the submodules
+#+BEGIN_EXAMPLE
+git submodule update --init
+#+END_EXAMPLE
+
+**** Ensure ownerships are set up correctly
+     We'll be using the =bin/bundle= wrapper for Bundler, so we need
+     to make sure =vendor/bundle= is writable by the git user
+
+#+BEGIN_EXAMPLE
+chown -R git:git vendor/bundle
+#+END_EXAMPLE
+
+**** Bundle install
+     Bundler ignores any =.gemrc= settings, but respects the
+     =HTTP_PROXY= environment variable. Let's use that:
+
+#+BEGIN_EXAMPLE
+export HTTP_PROXY=http://10.0.0.30:3128/
+#+END_EXAMPLE
+
+     By now we should be able to run bundle install:
+
+#+BEGIN_EXAMPLE
+bin/bundle install
+#+END_EXAMPLE
+
+**** If you run into trouble
+     If something goes wrong and you're unable to complete the process
+     using the steps above, you may need to use sudo to enter commands
+     manually. In that case, make sure you pass the =-E= switch to
+     sudo. That will pass along your environment variables
+     (eg. =HTTP_PROXY=).
+
+** Using the application console
+   You may run into situation where you need to operate on the data in
+   Gitorious directly. *Do not manipualate the database directly*.
+
+   Gitorious ships with an interactive console you can run inside your
+   terminal, and using this will ensure you don't end up with a
+   corrupt database.
+
+*** Starting the console
+   Assuming you have a fairly recent version of Gitorious, you'll
+   have a =bin/console= command within your Gitorious installation
+   root. Simply run this command, either as root, as the user
+   specified in =gitorious.yml= or using sudo:
+
+#+BEGIN_EXAMPLE
+# If you're logged in as root
+% /var/www/gitorious/app/bin/console
+
+# If you're logged in as the user specified in gitorious.yml (normally git)
+$ /var/www/gitorious/app/bin/console
+
+# If you're logged in as any other user:
+$ sudo /var/www/gitorious/app/bin/console
+
+# If you don't use sudo, simply use su first.
+#+END_EXAMPLE
+
+   Enter =exit= or =Ctrl-D= to exit the console when you're done.
+
+*** Fixing broken permissions
+   One of the situations that happens some times is that people lose
+   access to a repository, and are unable to use the web UI to
+   resolve the situation.
+
+   Gitorious uses a fancy join table to associate a repository with
+   either a user or a team. The table is named =committerships=, but
+   you'll want to work with the Ruby-based class Committership
+   instead.
+
+   A Committership maps a Repository and a User or Group instance,
+   and contains a bit mask for the permissions, which is any
+   combination of:
+
+   - commit
+   - admin
+   - review
+
+   To set up the team =staff= with all permissions (commit, admin and
+   review) to the repository named "mainline" in the project named
+   "gitorious", this is what you'd enter inside the console:
+
+#+BEGIN_SRC ruby
+team = Group.find_by_name! "staff"
+project = Project.find_by_slug! "gitorious"
+repository = project.repositories.find_by_name "mainline"
+
+cs = repository.committerships.build(:committer => team)
+cs.build_permissions(:commit, :admin, :review)
+cs.save!
+#+END_SRC
+
+   This will grant the =staff= team all privileges on the
+   repository. The exclamation marks in the above snippet will make
+   your script fail early in case of inconsistencies. If any invalid
+   data would be generated by the commands above, you should see a
+   description of what went wrong. One specific situation that may
+   occur is if the team already has access to the repository,
+   possibly with different permissions. In that case:
+
+#+BEGIN_SRC ruby
+team = Group.find_by_name! "staff"
+project = Project.find_by_slug! "gitorious"
+repository = project.repositories.find_by_name "mainline"
+
+cs = repository.committerships.detect {|cs| cs.committer = team}
+cs.build_permissions(:commit, :admin, :review)
+cs.save!
+#+END_SRC
+
+   should work better.
+
+   If you want to grant access to a user instead of a team, the
+   commands are more or less the same, except you create a
+   =Committership= with that =User= instead of a =Group=.
+
+#+BEGIN_SRC ruby
+user = User.find_by_login! "john"
+project = Project.find_by_slug! "gitorious"
+repository = project.repositories.find_by_name "mainline"
+
+cs = repository.committerships.build(:committer => user)
+cs.build_permissions(:commit, :admin, :review)
+cs.save!
+#+END_SRC
+
+
+** Upgrades
+*** Versioning
+
+As of July 7th 2011, Gitorious adopted a standard versioning scheme,
+and the initial version was 2.0.0. This version was chosen
+arbitrarily, but we chose 2 over 1 to reflect the fact that Gitorious
+has been through a few major changes since its inception, and we've
+had been around for almost 4 years at that point.
+
+Below you can read about the types of changes and what they demand
+from someone upgrading Gitorious. The changes are listed in order of
+most to least frequent. Releases are available as tags of the form
+“vx.y.z” in the Gitorious mainline repository.
+
+**** Risks of upgrading
+
+We will do our best to keep releases stable. Every release will be run
+in production on gitorious.org prior to being tagged.
+
+**** Patch versions
+
+Patch versions indicate changes with minor impact for installs. In
+general, the rules for patch versions are:
+
+- Should not require database migrations
+- Should not require configuration changes or additions
+- Should not require changes in CSS (e.g. by changing existing markup)
+
+In general: If you have a local install, you should be able to safely
+upgrade patch releases without changing anything, even if you have
+local CSS adjustments.
+
+Because of these restrictions, patch upgrades should be considered
+fairly trivial and of minimal risk. Refer to Upgrading for information
+on checking your current version and upgrading.
+
+**** Minor versions
+
+Minor versions are bigger changes or changes that require action on
+your part other than simply pulling from Git and restarting your
+app. These changes may include:
+
+- Database migrations
+- Required configuration changes and/or additions
+- Substantial changes/additions to the view
+- API changes in models and key lib classes
+
+Each minor version will receive its own entry in the documentation
+chapter you're currently reading.
+
+**** Major versions
+
+Major versions will presumably occur infrequently, and there is no
+specific rules to trigger an upgrade. Our rule of thumb right now is
+that if a new version of Gitorious requires an entirely new
+installation guide of its own, it’s probably a major release. However,
+we may also up the major version number due to the addition of
+substantial new features, redesigns and whatnot.
+
+**** How often/when will Gitorious update its version?
+
+Releases will be made on an irregular schedule, and will coincide with
+gitorious.org deployments, but not in a 1:1 ratio. Occasionally we
+deploy Gitorious a number of times throughout a single week, but do
+not expect more than one version per week. Follow this page, or better
+– the mailing list for updates.
+
+*** Approach 1: Manual upgrade
+
+If your version of Gitorious is really old, please start with this
+guide: [[https://gitorious.org/gitorious/pages/LegacyUpgrade][LegacyUpgrade]] ("really old" = older than February 3rd
+2009/92bb70a1).
+
+If your version Gitorious is only a little old, refer to [[https://gitorious.org/gitorious/pages/BundlerSetup][BundlerSetup]]
+("a little old" = older than January 24th 2011/c44237f).
+
+***** The changelog tool
+
+As of Gitorious 2.0.0, Gitorious ships with a simple changelog
+tool. The tool consists of a single rake task that can tell you what
+version you are currently on and what versions are available to
+you. To use it, invoke the following command from the root of your
+installation:
+
+=bundle exec rake changelog=
+
+The tool will give you a list of available version along with an arrow
+indicating your current version. If the arrow points to a green
+number, you're on top of things. If it points to a red number, it
+means that upgrades are available, and you are encouraged to stay up
+to date.
+
+To display a changelog for changes between your current version and
+another version, run the tool with the `VERSION` environment variable
+set:
+
+#+begin_src shell-script
+bundle exec rake changelog VERSION=2.0.1
+#+end_src
+
+***** Before upgrading
+
+No matter how simple an upgrade may look, we strongly encourage you to
+always back up your database and repository data prior to upgrades. If
+nothing else, an upgrade is a good time to get some snapshots if you
+don't already have scheduled backups of your system. It's also a good
+idea to keep a copy of Gitorious configuration files outside the
+actual install.
+
+***** Upgrading patch versions
+
+Patch upgrades should be trivial in nature. The steps are simple:
+
+#+begin_src shell-script
+cd /path/to/gitorious
+git fetch git://gitorious.org/gitorious/mainline.git
+git merge v2.x.y
+rake assets:clear
+#+end_src
+
+Note that `rake assets:clear` was not available prior to 2.1.0. 2.0.x
+can be directly upgraded to 2.1.0, see below.
+
+As of 2.1.0 you also need these steps for any upgrade:
+
+#+begin_src shell-script
+git submodule init
+git submodule update
+rake db:migrate
+#+end_src
+
+Finally, restart all services. This includes the webserver, the poller
+and the git daemon. x/y depends on the actual version.
+
+***** Upgrading customized installs
+
+If your Gitorious setup has changes, you may experience conflicts when
+pulling in changes. It is recommended to push your patched version of
+Gitorious somewhere, for example to itself, so you can easily clone
+Gitorious to a local machine, or somewhere else on the server to make
+sure that the patch will apply cleanly before attempting the upgrade.
+
+***** Sample upgrade
+
+Assuming you are on v2.0.0 or newer:
+
+#+begin_src shell-script
+bundle exec rake changelog
+Available versions
+v2.0.1              Next increment
+-> v2.0.0           First versioned version of Gitorious
+#+end_src
+
+Obviously, there's a new version in town, so let's see what it offers:
+
+#+begin_src shell-script
+bundle exec rake changelog VERSION=2.0.1
+Changes between v2.0.0 and v2.0.1:
+A longer description appears here
+#+end_src
+
+This looks good, so let's upgrade:
+
+#+begin_src shell-script
+git fetch git://gitorious.org/gitorious/mainline.git
+git merge v2.0.0
+rm public/stylesheets/all.css public/javascripts/all.js public/javascripts/capillary.js public/**/*/gts-*.*
+touch tmp/restart.txt
+#+end_src
+
+***** Upgrading from 2.0.x to 2.1
+
+You can upgrade directly from any 2.0.x version directly to 2.1.0. Start by reviewing changes:
+
+#+begin_src shell-script
+bundle exec rake changelog VERSION=2.1.0
+#+end_src
+
+If this looks good, back up everything (see above), and get started:
+
+#+begin_src shell-script
+git fetch git://gitorious.org/gitorious/mainline.git
+git merge v2.1.0
+rake assets:clear
+#+end_src
+
+Gitorious now has submodules. Initialize and pull them, then upgrade
+the database.
+
+#+begin_src shell-script
+git submodule init
+git submodule update
+rake db:migrate
+#+end_src
+
+Then restart your server (assuming you're using Passenger):
+
+#+begin_src shell-script
+touch tmp/restart.txt
+#+end_src
+
+***** Upgrading from 2.1.x to 2.2
+
+You can upgrade directly from any 2.1.x version directly to 2.2.0. Start by reviewing changes:
+
+#+begin_src shell-script
+bundle exec rake changelog VERSION=2.2.0
+#+end_src
+
+If this looks good, back up everything (see above), and get started:
+
+#+begin_src shell-script
+git fetch git://gitorious.org/gitorious/mainline.git
+git merge v2.2.0
+rake assets:clear
+git submodule --init update
+#+end_src
+
+Upgrade the database:
+
+#+begin_src shell-script
+rake db:migrate
+#+end_src
+
+Then restart your server (assuming you're using Passenger):
+
+#+begin_src shell-script
+touch tmp/restart.txt
+#+end_src
+
+If you want to use the new [[private repositories
+ feature][https://gitorious.org/gitorious/pages/PrivateRepositories]], set the
+=enable_private_repositories= setting to `true` in
+config/gitorious.yml. See the sample configuration in
+config/gitorious.sample.yml for more information.
+
+***** Upgrading from 2.2.x to 2.3
+
+You can upgrade directly from any 2.2.x version directly to 2.3.0. Start by reviewing changes:
+
+#+begin_src shell-script
+bundle exec rake changelog VERSION=2.3.0
+#+end_src
+
+If this looks good, back up everything (see above), and get started:
+
+#+begin_src shell-script
+git fetch git://gitorious.org/gitorious/mainline.git
+git merge v2.3.0
+rake assets:clear
+#+end_src
+
+Gitorious now has submodules. Initialize and pull them:
+
+#+begin_src shell-script
+git submodule init
+git submodule update
+#+end_src
+
+Upgrade the database:
+
+#+begin_src shell-script
+rake db:migrate
+#+end_src
+
+Then restart your server (assuming you're using Passenger):
+
+#+begin_src shell-script
+touch tmp/restart.txt
+#+end_src
+
+***** Upgrading from 2.3.0 to 2.3.1
+
+To upgrade from version 2.3.0 to 2.3.1, follow these steps:
+
+#+begin_src shell-script
+git fetch git://gitorious.org/gitorious/mainline.git
+git merge v2.3.1
+bundle install
+rake assets:clear
+touch tmp/restart.txt
+#+end_src
+***** Upgrading from 2.3.1 to 2.3.2
+
+To upgrade from version 2.3.1 to 2.3.2, follow these steps:
+
+#+begin_src shell-script
+git fetch git://gitorious.org/gitorious/mainline.git
+git merge v2.3.2
+bundle install
+rake assets:clear
+touch tmp/restart.txt
+#+end_src
+
+***** Upgrading from 2.3.2 to 2.4.1
+
+To upgrade from version 2.3.2 to 2.4.1, follow these steps:
+
+#+begin_src shell-script
+git fetch git://gitorious.org/gitorious/mainline.git
+git merge v2.4.1
+bundle install
+rake assets:clear
+rake db:migrate
+rake ts:rebuild
+touch tmp/restart.txt
+#+end_src
+
+***** Upgrading patch releases in the 2.4 series
+
+Due to our use of git-flow there have been a few patch releases in the
+2.4 series. To upgrade between these:
+
+#+begin_src shell-script
+git fetch git://gitorious.org/gitorious/mainline.git
+git merge v2.4.x
+bundle install
+rake assets:clear
+rake db:migrate
+rake ts:rebuild
+touch tmp/restart.txt
+#+end_src
+
+*** Approach 2: Snapshot old instance, restore state in a newly installed instance
+
+The nuclear option, and the simplest way to go in some cases. If you
+need to make a major version leap (aka. migrating an ancient Gitorious
+installation) you might want to consider simply snapshotting the old
+one and recovering in a freshly installed new one. This also has the
+benefit of not screwing up your older, working installation if
+something goes wrong.
+
+(See the [[*Backup,%20recovery,%20migration,%20cloning][Backup, recovery, migration, cloning]] below)
+
+** TODO Keeping it running
+*** Monit
+*** Diagnostic checks
+** Backup, recovery, migration, cloning
+
+Gitorious has support for snapshotting and restoring its state, which
+makes it possible to easily perform backups, disaster recovery,
+cloning and migration of Gitorious sites.
+
+*** Using the snapshot/restore commands
+
+If you're on a recent version of Gitorious (>v2.3.0) you'll find two
+commands under the scripts directory: scripts/snapshot and
+scripts/restore. Each of them takes a single parameter: the path of
+the tar file you want your Gitorious installation backed up to, or
+restored from. Note that you'll need to launch the commands from the
+root directory of your Gitorious install (the directory where you find
+your Rakefile, Gemfile, config directory etc).
+
+*** How to perform snapshots in older Gitorious versions
+
+It's fairly straightforward to add these new snapshot|restore commands
+to an older Gitorious instance a well: you only need to clone the
+latest version of the Gitorious code, and copy the following files to
+the same locations in your current, older installation:
+
+=script/restore=
+=script/snapshot=
+=lib/tasks/backup.rake=
+
+*** Assumptions and caveats
+
+- For disaster recovery, you'll first need to get a functional
+  installation of Gitorious up and running, after which you can run
+  the restore command to bring in your data again. Note that the
+  snapshot tarball also includes the configuration files from your old
+  Gitorious installation. They are not automatically copied into your
+  new installation, but can be used to recreate your old config in
+  your new Gitorious installation (useful if your previous Gitorious
+  installation had custom LDAP integration, custom hooks etc).
+
+- Snapshots will not preserve any custom code or theming you may have
+  added to your Gitorious installation: any such local modifications
+  will need to be backed up and restored separately
+
+- Some operations in Gitorious are asynchronous, meaning they are
+  performed by publishing/consuming messages on a queue. The
+  snapshot/restore commands don't currently capture or restore the
+  state of the queue, so any current work on the queue will be lost.
+
+- The snapshot/recovery commands assume that you have the time and
+  disk-space to slurp down all your hosted repos into a local
+  tarball. Sites with huge amounts of git repository data may
+  therefore need more custom backup schemes.
+
+- The restore command assumes that no breaking changes have happened
+  between the version you snapshot from, and the version you restore
+  your data into. In the future, major Gitorious version jumps may
+  necessitate a more manual restore procedure due to changes in
+  configurations, db schema, folder structure etc.
+
+*** Scenarios
+
+The snapshot|restore commands are useful for multiple tasks beyond
+just standard backups.
+
+**** Backup and disaster recovery
+
+Run periodic backups, for instance via cron. Execute the snapshot
+command, for example like this script/snapshot
+/tmp/todays-snapshot.tar. Transfer the newly created tarball to
+another server, offsite location or something like Amazon S3.
+
+If disaster strikes on your Gitorious installation, install a new
+instance of Gitorious, then run script/restore todays-snapshot.tar to
+restore your old state in the new installation.
+
+**** Migrations and clones
+
+The same procedure is useful if you just need to move or clone your
+Gitorious state from one server to another. Snapshot the old one, copy
+the tarball file over to the other installation and restore
+there. Simple.
+
+**** Upgrading
+
+Different scenario, same procedure: if you need to upgrade from an
+older version of Gitorious and don't want to bother with carefully
+upgrading your Gitorious instance across multiple versions, you can
+simply snapshot the state of your old Gitorious site, install a fresh
+new Gitorious instance and just restore your state there.
+
+**** Snapshots and rollbacks for development and testing
+
+If you're a developer extending, customizing or developing new
+features for Gitorious, you can use the snapshot|restore commands to
+simply setting up and restoring multiple standard database/repository
+states in order to simplify testing.
+
+** TODO Scaling
+
+*** Caching with Nginx
+    There are a couple of actions in Gitorious which benefits
+    greatly from caching. The basic premise when setting up caching
+    is to ensure that you don't cache what shouldn't be cached;
+    fortunately most caching servers will respect a few basic
+    principles:
+
+    - Respect the =Cache-Control= headers, specifically don't cache
+      data marked as =private=, and respect the =max-age= part of the
+      =Cache-Control= headers
+    - Don't cache data which is delivered with =Set-Cookie= headers
+      from the backend server
+
+    Gitorious.org uses Varnish for caching, but Nginx works in a
+    similar fashion. There are a couple of heavily-used actions in
+    Gitorious which have been optimized for caching:
+
+    - The URLs used internally when resolving an incoming URL to a
+      location on disk
+    - Commit diffs
+
+    These are delivered without =Set-Cookie= headers and with
+    appropriate =Cache-Control= headers, while most other actions in
+    Gitorious will not be cacheable.
+
+    To set up caching in Nginx, first define a cache zone in your
+    configuration files (at the top level)
+
+#+BEGIN_SRC conf
+proxy_cache_path /var/cache/nginx/gitorious levels=1:2 keys_zone=gitorious:128m;
+#+END_SRC
+
+    Then, inside a =location= block where you define the backend
+    proxy, add the following:
+
+#+BEGIN_SRC conf
+# Use the cache zone gitorious
+proxy_cache gitorious;
+
+# Add a header displaying the cache status
+add_header X-Cache-Status $upstream_cache_status;
+#+END_SRC
+
+    This will enable caching where appropriate, and additionally add
+    a =X-Cache-Status= header to your responses, indicating whether
+    the response from the backend was cached.
+
+*** Caching with Varnish
+*** Horizontal scaling
+    what sort of hardware will you need to keep a single server running
+    under misc typical usage scenarios?
+*** Vertical scaling
+    distributing the load over multiple serves
+*** Repository hashing/sharding
+** Troubleshooting
+
+You're running your own Gitorious site. Now something seems to be
+broken. Where do you start?
+
+*** Diagnostics CLI tool
+
+Gitorious includes a self-diagnostic tool (available in v2.3.0 and
+onwards).
+
+Execute scripts/diagnose (as superuser/root), and Gitorious will print
+out a summary of its internals. Obvious problems in your setup will
+show up here, which should give you a clue as to what could be amiss
+in your installation.
+
+*** Diagnostics dashboard url
+
+You can also check the health of the site via the web frontend. If you
+are a site admin, browse to /admin/diagnostics at your Gitorious
+site. You'll be greeted with a diagnostics summary very similar to the
+script/diagnose command.
+
+*** Check the FAQ
+
+(See FAQ chapter below)
+
+*** Ask the community
+
+If you're still stuck, consider asking the Gitorious community for
+suggestions.
+
+The core contributors and quite a few community members subscribe to
+the [[http://groups.google.com/group/gitorious?hl=en][Gitorious Google Group]]. There's also an IRC channel
+available: #gitorious at freenode.net
+
+Finally, if you are considering paid support/help, note that [[http://gitorious.com][Gitorious
+AS]] offers commercial support.
+
+** TODO Authentication & authorization
+*** LDAP integration
+*** Private projects/repositories
+** Customizing the user interface in Gitorious
+   If you wish to customize your Gitorious server, there are a lot of
+   things that can be adjusted, from very basic settings to building
+   your own templates.
+
+   All of these settings require you to make changes to the
+   =config/gitorious.yml= file inside your Gitorious installation, and
+   the included sample file in =config/gitorious.sample.yml= contains
+   an up-to-date description of the various settings.
+
+   Once you have made changes to the =config/gitorious.yml= file
+   you'll need to restart your application server. If you use [[https://www.phusionpassenger.com/][Phusion
+   Passenger]], simply touch the =tmp/restart.txt= file, for [[http://unicorn.bogomips.org/SIGNALS.html][Unicorn]]
+   send a =USR1= signal to your Unicorn master process.
+*** "On/off settings"
+    These settings are very basic toggles:
+    - The =is_gitorious_dot_org= setting specifies whether you want
+      the "flashy" main page used on gitorious.org or not.
+    - The =extra_html_head_data= setting lets you add custom HTML data
+      to be included in the =<head>= section of all pages.
+    - The =additional_footer_links= setting lets you add extra links
+      to the footer of the pages.
+    - The =terms_of_use= setting lets you turn off acceptance of the
+      terms of use.
+    - The =terms_of_service_url= setting lets you specify the link to
+      the terms of service, used in the footer and as a link from the
+      prompt to accept the terms of service when new users register.
+    - The =privacy_policy_url= setting lets you specify a different
+      link for the privacy policy linked to in the site footer.
+    - The =site_name= setting lets you change the default site name
+      used in HTML =<title>= tags
+    - The =custom_username_label= setting lets you specify a different
+      label for the username field on the login page. Very useful for
+      LDAP based authentication.
+    - The =favicon_url= setting lets you specify the path, relative to
+      the =public= directory in your Gitorious installation, where your
+      favicon is.
+    - The =logo_url= setting lets you specify the URL to a use as an
+      =<img>= tag for your logo.
+*** Further customizations
+    If adjusting the toggled mentioned in the previous settings
+    doesn't quite do it for you, Gitorious lets you supply your own
+    stylesheets or build your own layout files.
+
+**** The =common_stylesheets= setting
+    Additional stylesheets for most pages. "Most pages" is everything
+    except for the frontpage/public index, login page and the register
+    page.
+
+    One way to theme Gitorious would be to put a submodule in =public/=
+    that contains stylesheets and images. Then include the following
+    setting (assuming that your submodule is at =public/mytheme=, and
+    includes a directory =stylesheets/theme.css=):
+
+#+BEGIN_EXAMPLE
+common_stylesheets: /mytheme/stylesheets/theme
+#+END_EXAMPLE
+
+    If you have several files:
+
+#+BEGIN_EXAMPLE
+common_stylesheets:
+  - /mytheme/stylesheets/theme
+  - /mytheme/stylesheets/theme2
+#+END_EXAMPLE
+
+    Note that the extra stylesheets will be added to the bundle used
+    in production.
+
+**** The =external_stylesheets= setting
+     Like =common_stylesheets=, but applies to the frontpage and login pages.
+**** The =additional_view_paths= setting
+     Add more view paths if you want to override some or all of
+     Gitorious' views. *Make sure you know what you're doing before
+     attepting this - there is no API guarantee from the current
+     controllers.* If you override views, study the git log (the
+     Changelog may not mention these changes) before upgrading.
+
+     Any =.html.erb= files you put into this directory should have a
+     path relative to the =additional_view_paths= setting; in that
+     case those files will be preferred to the ones shipping with
+     Gitorious itself. For example, to supply your own view file for
+     the "show user" page (=UsersController#show=), you should add a
+     file in =$additional_view_paths/views/users/show.html.erb=
+     containing the ERB code to be used in that view. Start out by
+     copying =app/views/users/show.html.erb= to your custom directory,
+     and make changes to that file. If you do this on your own
+     computer, running Gitorious with =RAILS_ENV=development= you can
+     reload the page in your browser to view the changes. On a
+     production server, a restart is needed to view the changes.
+
+     You should take great care to ensure that all necessary navigation
+     items are preserved in your overriding files, and you should
+     verify that your layout still works after upgrading your
+     Gitorious server to new minor/major versions.
+
+     It's recommended to use something like Git's submodules to add
+     these views to your site.
+
+** How to run virtualization on a headless server?
+   Most non-sysadmin people have only used GUI tools such as VMWare,
+   VirtualBox or Parallels, and don't know how to set up a virtual
+   machine on a computer without a GUI. We have some good news for
+   you: you will be able to use GUI tools on your workstation to work
+   with virtual machines running on a datacenter server, and it really
+   isn't too difficult.
+
+   There are countless ways of doing virtualizations on Linux, this
+   example guides you through using the Kernel Virtualization Module
+   (KVM) together with a user-space tool called qemu. This means that
+   a kernel module will take care of the heavy lifting, while qemu
+   will be what you see on your computer.
+
+   Start off with the "Prerequisites" section below, and then continue
+   to the section which fits you best:
+
+   - If you run Linux on your local computer and you want to
+     familiarize yourself with how qemu works, read the section [[*Manual%20qemu%20setup][Manual
+     qemu setup]] below. You'll be able to log into your server within a
+     few minutes.
+
+   - If you're not running Linux on your local computer, or if you'd
+     rather start with a production-ready setup, jump straight to the
+     [[*Using%20libvirt][Using libvirt]] section below and start building your production
+     server.
+
+*** Prerequisites
+**** Install qemu-img on the server
+    To work with different virtual disk images on your server, you'll
+    need the =qemu-img= tool installed.
+
+#+BEGIN_EXAMPLE
+# Fedora/CentOS/RedHat:
+(sudo) yum install qemu-img
+
+# Debian/Ubuntu
+(sudo) apt-get install qemu
+#+END_EXAMPLE
+**** Download the virtual appliance to your server
+    To download the Gitorious Virtual Appliance (version 2.4.9) to
+    your server, enter this in a terminal on the server:
+
+#+BEGIN_EXAMPLE
+wget https://dwa2rvxkle6ff.cloudfront.net/gitorious-ce-va-v2.4.9.ova
+#+END_EXAMPLE
+
+**** Extract the vmdk file from the ova file
+    The ova file is a tarball containing an XML file describing the
+    machine, and a vmdk image file. To extract these from the ova
+    file, enter:
+
+#+BEGIN_EXAMPLE
+tar xf gitorious-ce-va-v2.4.9.ova
+#+END_EXAMPLE
+
+**** Convert the vmdk file to a raw image file
+    Qemu ships with a tool which converts between virtually all
+    virtual disk file formats. To convert the vmdk to an .img file,
+    enter
+
+#+BEGIN_EXAMPLE
+qemu-img convert <gitorious>.vmdk <gitorious>.img
+#+END_EXAMPLE
+
+*** Manual qemu setup
+    This step is completely optional, but it will help you understand
+    a little more about what's actually happening when you use
+    qemu/kvm for virtualization. You will need to run Linux on your
+    local machine; either natively or in a virtual machine.
+
+**** Install qemu
+    First of all you'll need to install Qemu, a machine emulator and
+    virtualizer. By using Qemu as a machine emulator, you get a really
+    simple tool to emulate a processor, albeit a fairly slow one. By
+    using Qemu as a virtualizer, you get a just as simple tool which
+    is a lot faster and uses your native CPU for virtualization.
+
+    To install Qemu on your computer:
+
+#+BEGIN_EXAMPLE
+# On Debian/Ubuntu:
+(sudo) apt-get install qemu-kvm
+# On Fedora/RedHat:
+(sudo) yum install qemu-kvm
+#+END_EXAMPLE
+
+**** Start the appliance
+    Now that you have Qemu installed and a usable disk image (follow
+    the steps in the "Prerequisites" section above, or copy the files
+    from your server to your computer) it's time to try it out.
+
+    To start a virtual machine with 1G RAM, booting from the Gitorious
+    VA disk image:
+
+#+BEGIN_EXAMPLE
+qemu-kvm -m 1024 -hda gitorious.img -snapshot
+#+END_EXAMPLE
+
+    The =-m 1024= option sets your VM up with 1G RAM, the =-hda= option
+    specifies which file to use as the first hard drive, and the
+    =-snapshot= option makes your VM discard any changes you make
+    when you shut down the VM.
+
+    After a few seconds you'll see a new window open (this is
+    actually a VNC client), and you'll be able to log into your VA
+    after a few more seconds. Simply enter =Ctrl-C= in the terminal
+    where you started the VM to shut down the VM.
+
+*** Using libvirt
+    Libvirt is a set of tools which provide a single interface to
+    various virtualization backends like KVM and Xen. We're going to
+    install some of the tools on your server, and then another set of
+    tools you can run on your local computer. Again, if you're not
+    using Linux on your local computer, you can install the client
+    tools in a virtual machine on your computer (VMWare, Parallels,
+    VirtualBox will all work).
+
+    Please note that your server needs to be running non-virtualized,
+    running virtual machines inside a virtual machine probably isn't
+    going to work.
+
+    The following commands assume your server is running; for other
+    operating systems you'll need to install a different set of packages.
+
+**** Install libvirt on your server
+    First of all, install a few packages on your server:
+
+#+BEGIN_EXAMPLE
+# On Ubuntu:
+qemu-kvm libvirt-bin bridge-utils
+#+END_EXAMPLE
+
+    Next, only user accounts on your server who are member of the
+    =libvirtd= group are allowed to use KVM virtual machines. Add
+    your user account to this group on the server:
+
+#+BEGIN_EXAMPLE
+sudo adduser $USER libvirtd
+#+END_EXAMPLE
+
+    Now, start the libvirtd virtualization daemon on your server:
+
+#+BEGIN_EXAMPLE
+sudo service libvirt-bin start
+#+END_EXAMPLE
+
+    To verify that everything is OK, enter:
+
+#+BEGIN_EXAMPLE
+virsh -c qemu:///system list
+#+END_EXAMPLE
+
+**** Move the disk image to where libvirt can find it
+    The libvirt tools work with several storage pools, which is a
+    really nice feature, but for now we just want to make the disk
+    image we converted into a location where libvirt can find it.
+
+    Move the disk image you created in the "[[*Convert%20the%20vmdk%20file%20to%20a%20raw%20image%20file][Convert the vmdk file to a
+    raw image file]]" section above into the =/var/lib/libvirt/images=
+    directory on your server:
+
+#+BEGIN_EXAMPLE
+cd /path/to/gitorious.img
+mv gitorious.img /var/lib/libvirt/images/
+#+END_EXAMPLE
+
+    You will need to be root to do this.
+
+**** Install virt-manager on your workstation
+    Now it's time to install the GUI tools to work with the KVM
+    guests on your local computer. If you're using a non-Linux
+    operating system on your local computer, set up a virtual machine
+    with a Linux version on it.
+
+    The package you'll need to install is called =virt-manager= on
+    both Ubuntu/Debian and Fedora/RedHat systems. To install the
+    tools, enter:
+
+#+BEGIN_EXAMPLE
+# Ubuntu/Debian:
+sudo apt-get install virt-manager
+
+# Fedora/RedHat/CentOS:
+sudo yum install virt-manager
+#+END_EXAMPLE
+
+    Once it's installed, simply start the GUI like this:
+
+#+BEGIN_EXAMPLE
+virt-manager &
+#+END_EXAMPLE
+
+    You'll see a window opening, and from here we'll add a connection
+    to your server over SSH. Select File->Add connection, and fill it
+    out like this:
+
+    - Hypervisor: Select "QEMU/KVM"
+    - Click the "Connect to remote host" checkbox
+    - Method: SSH
+    - Username: Enter your username on your server
+    - Hostname: Enter the hostname/IP address of your server
+
+    Click "Connect". Once your're connected, right-click your server
+    in the list and select "New". Enter a name for the new virtual
+    machine, and select the "Import existing disk image"
+    option. Click "Forward".
+
+    Click the "Browse" button, and locate the disk image we created
+    previously. Click it, and select "Choose volume". Enter "Linux" as
+    OS type, and "RedHat Enterprise Linux 6" as OS version. Click
+    "Forward".
+
+    On the next screen, select how much RAM and how many CPUs to
+    allocate to the virtual machine, and click "Forward". Click
+    "Finish", and your virtual machine is ready for use.
+
+    Simply double-click the virtual machine you just created, watch
+    it boot and log into the machine through the console.

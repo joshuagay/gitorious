@@ -1,0 +1,22 @@
+<div id="gts-pjax-container">
+  <div class="gts-pjax pull-right">
+    <%= link_to 'Add label', new_project_issue_label_path(project), :class => 'btn btn-primary' %>
+  </div>
+  <h2 class="gts-legend">
+    Labels
+  </h2>
+  <table class="table table-stripped gts-table gts-project-issue-labels">
+    <thead>
+      <tr>
+        <th>Color</th>
+        <th>Name</th>
+        <th>Issue count</th>
+        <th>Created at</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody class="gts-tbody-actions gts-delete-links">
+      <%= render labels %>
+    </tbody>
+  </table>
+</div>

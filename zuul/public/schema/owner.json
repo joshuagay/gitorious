@@ -1,0 +1,12 @@
+{
+    "id": "http://api.gitorious.org/schema/owner#",
+    "$schema": "http://json-schema.org/schema#",
+    "title": "Owner",
+    "description": "Someone who owns projects and repositories; a user or a team",
+    "type": "object",
+    "properties": {
+        "type": { "enum": ["user", "team"] },
+        "id": { "type": "integer" }
+    },
+    "required": ["type"]
+}

@@ -1,0 +1,61 @@
+<div id="gts-pjax-container">
+  <%= pull_box "#{content_tag(:span, issue.state, :class => 'label')} ##{issue.issue_id} #{issue.title}" do %>
+    <% if can_edit? %>
+      <div class="btn-group gts-pjax">
+        <%= link_to 'Edit', edit_project_issue_path(issue.project, :issue_id => issue.issue_id), :class => 'btn' %>
+      </div>
+    <% end %>
+    <div class="gts-pullbox-content-meta gts-pullbox-content-meta-top">
+      <div class="issue-assignees">
+        Assigned users:
+        <% if issue.assignees.any? %>
+          <% issue.assignees.each do |user| %>
+            <%= link_to user.login, main_app.user_path(user) %>
+          <% end %>
+        <% else %>
+          <em>none</em>
+        <% end %>
+      </div>
+    </div>
+    <div class="gts-markup">
+      <% if issue.description.present? %>
+        <%= render_markdown(issue.description).html_safe %>
+      <% else %>
+        <em>no description...</em>
+      <% end %>
+    </div>
+    <% if issue.labels.any? %>
+      <div class="gts-pullbox-content-meta gts-pullbox-content-meta-bottom">
+        <div class="issue-labels">
+          Labels:
+          <% issue.labels.each do |label| %>
+            <%= Issues::Renderers::LabelRenderer.new(self).label_link(issue, label) %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    <div class="gts-pullbox-content-meta gts-pullbox-content-meta-bottom">
+      <div class="issue-priority pull-left">
+        Priority: <%= issue.priority_name %>
+      </div>
+    </div>
+    <div class="gts-pullbox-content-meta gts-pullbox-content-meta-bottom">
+      <div class="issue-milestone pull-left">
+        Milestone: <%= issue.milestone.present? ? issue.milestone.name : '<em>none</em>'.html_safe %>
+      </div>
+      <div class="issue-author pull-right">
+        Reported by <%= link_to issue.user.login, main_app.user_path(issue.user) %>
+      </div>
+    </div>
+  <% end %>
+  <br/>
+  <%= tabbable({ 'discussion' => '#discussion' }, :active => 'discussion') do %>
+    <%= tab_pane 'discussion', :active => true do %>
+      <%= render 'issues/comments/comments', :comments => issue.comments %>
+      <br/>
+      <% if logged_in? %>
+        <%= render 'issues/comments/form', :comment => issue.comments.build, :issue => issue, :project => project %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

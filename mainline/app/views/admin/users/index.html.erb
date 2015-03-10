@@ -1,0 +1,69 @@
+<%
+  #--
+  #   Copyright (C) 2012-2014 Gitorious AS
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<%= partial("admin/shared/header", {
+        :app => Gitorious,
+        :active => :users,
+        :title => @title = "User administration",
+        :description => "Manage users."
+      }) %>
+
+<div class="container">
+  <p><%= link_to(t('views.users.create_btn'), new_admin_user_path, :class => 'btn btn-primary') %></p>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th><%= t(:login, :scope => "activerecord.attributes.user").humanize %></th>
+        <th><%= t(:email, :scope => "activerecord.attributes.user").humanize %></th>
+        <th><%= t(:created_at, :scope => "activerecord.attributes.user").humanize %></th>
+        <th><%= t("views.users.activated") %></th>
+        <th><%= t("views.users.suspended") %></th>
+        <th><%= t("views.users.admin") %></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% users.each do |user| -%>
+        <tr id="user-<%= user.id %>" class="<%= cycle("odd", "even") -%>">
+          <td><%= link_to h(user.login), user %></td>
+          <td><%= link_to user.email, "mailto:#{user.email}" %></td>
+          <td><%= l(user.created_at, :format => :short) %></td>
+          <td><%= user.activated? ? l(user.activated_at, :format => :short) : t("views.common.no") %></td>
+          <td><%= user.suspended? ? l(user.suspended_at, :format => :short) : t("views.common.no") %></td>
+          <td>
+            <%= link_to (site_admin?(user) ? t("views.common.yes") : t("views.common.no")), flip_admin_status_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %>
+          </td>
+          <% if user.suspended? -%>
+            <td><%= link_to t("views.users.unsuspend"), unsuspend_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
+          <% else -%>
+            <td><%= link_to t("views.users.suspend"), suspend_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
+          <% end -%>
+          <% unless Gitorious::Authentication::Configuration.authentication_method('LDAP') %>
+            <td><%= link_to t("views.users.reset_pwd"), reset_password_admin_user_path(user), :confirm => t("views.common.confirm"), :method => :put %></td>
+          <% end %>
+          <td><%= link_to t("views.users.manage_ssh_keys"), admin_user_keys_path(user) %></td>
+        </tr>
+      <% end -%>
+    </tbody>
+  </table>
+  <%= raw JustPaginate.page_navigation(page, total_pages) { |n| admin_users_path(:page => n) } -%>
+</div>

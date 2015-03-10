@@ -1,0 +1,18 @@
+<tr>
+  <td>
+    <%= milestone.name %>
+  </td>
+  <td>
+    <%= milestone.issues.count %>
+  </td>
+  <td>
+    <%= l(milestone.due_date) if milestone.due_date %>
+  </td>
+  <td>
+    <%= l(milestone.created_at) %>
+  </td>
+  <td>
+    <%= link_to 'Edit', [:edit, milestone.project, :issue, milestone], :class => 'btn' %>
+    <%= link_to 'Delete', [milestone.project, :issue, milestone], :class => 'btn btn-danger' %>
+  </td>
+</tr>

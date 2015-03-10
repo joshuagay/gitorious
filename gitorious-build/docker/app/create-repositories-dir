@@ -1,0 +1,6 @@
+#!/bin/bash
+
+set -e
+
+mkdir -p /srv/gitorious/data/repositories
+chown git:git /srv/gitorious/data/repositories

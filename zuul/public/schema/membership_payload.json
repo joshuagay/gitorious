@@ -1,0 +1,12 @@
+{
+    "id": "https://api.gitorious.org/schema/membership-payload#",
+    "$schema": "http://json-schema.org/schema#",
+    "title": "Team membership payload",
+    "description": "Payload describing a new member to add to a team",
+    "type": "object",
+    "properties": {
+        "user_id": { "type": "integer" },
+        "role": { "enum": ["member", "administrator"] }
+    },
+    "required": ["login", "role"]
+}

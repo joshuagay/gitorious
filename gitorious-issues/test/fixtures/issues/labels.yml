@@ -1,0 +1,20 @@
+# Read about fixtures at
+# http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+bug:
+  id: 1
+  project_id: 1
+  name: 'bug'
+  color: 'red'
+
+task:
+  id: 2
+  project_id: 1
+  name: 'task'
+  color: 'green'
+
+feature:
+  id: 3
+  project_id: 1
+  name: 'feature'
+  color: 'blue'

@@ -1,0 +1,3 @@
+production:
+  address: sphinx
+  mysql41: 9312

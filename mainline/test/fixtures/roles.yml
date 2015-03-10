@@ -1,0 +1,7 @@
+admin:
+  name: <%= Role::ADMIN %> 
+  kind: <%= Role::KIND_ADMIN %>
+  
+member:
+  name: <%= Role::MEMBER %>
+  kind: <%= Role::KIND_MEMBER %>

@@ -1,0 +1,62 @@
+<%
+  #--
+  #   Copyright (C) 2013-2014 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<%= repo_header repository, :current_user => current_user %>
+
+<div class="container">
+  <div class="row">
+    <div class="alert alert-info span7">
+      <h2>Congratulations on your new repository!</h2>
+      <p>
+        Please follow these few steps to start using your new repository.
+      </p>
+      <h3>Install and configure Git</h3>
+      <p>
+        If you haven't already,
+        <a href="http://git-scm.com">download and install Git</a>. Then provide some basic configuration to Git:
+      </p>
+      <pre class="prettyprint">git config --global user.name "<%=h current_user && current_user.fullname || "Your full name" -%>"
+git config --global user.email "<%=h current_user && current_user.email || "your@email.com" -%>"</pre>
+      <h3>Create a new Git repository</h3>
+      <p>
+        If your project is not already using Git, initialize a
+        repository now:
+      </p>
+      <pre class="prettyprint">git init .</pre>
+      <p>
+        Add the existing files to Git's index and commit:
+      </p>
+      <pre class="prettyprint">git add .
+git commit -m "Initial commit"</pre>
+      <h3>Push your changes</h3>
+      <p>
+        Configure your newly created Gitorious repository as a
+        "remote", then push your changes:
+      </p>
+      <pre class="prettyprint">git remote add origin <%= Gitorious.default_remote_url(repository) %>
+git push -u origin master</pre>
+      <p>
+        The <code>-u</code> (<code>--set-upstream</code>) tells Git that your
+        <code>master</code> branch always goes to the <code>origin</code> remote.
+        Next time you can push by simply issuing:
+      </p>
+      <pre class="prettyprint">git push</pre>
+    </div>
+  </div>
+</div>

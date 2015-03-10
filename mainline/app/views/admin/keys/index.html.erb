@@ -1,0 +1,32 @@
+<%
+#--
+#   Copyright (C) 2014 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+<%= partial("admin/shared/header", {
+  :app => Gitorious,
+  :active => :users,
+  :title => @title = "User administration",
+  :description => "Manage users."
+}) %>
+
+<div class="container">
+  <%= link_to("Add new", new_admin_user_key_path(user), :class => 'btn btn-primary pull-right') %>
+  <h2 class="gts-legend">Manage <%= user.login %>'s SSH keys</h2>
+  <%= render 'keys/keys',
+    ssh_keys: user.ssh_keys,
+    delete_path: lambda { |ssh_key| admin_user_key_path(ssh_key.user, ssh_key) } %>
+</div>

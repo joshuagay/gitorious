@@ -1,0 +1,18 @@
+<domain type='lxc'>
+  <name><%= @title %></name>
+  <memory unit='KiB'>1572864</memory>
+  <os>
+    <type arch='x86_64'>exe</type>
+    <init>/sbin/init</init>
+  </os>
+  <devices>
+    <filesystem type='mount'>
+      <source dir='/var/lib/libvirt/lxc/<%= @title %>'/>
+      <target dir='/'/>
+    </filesystem>
+    <interface type='network'>
+      <source network='default'/>
+    </interface>
+    <console type='pty'/>
+  </devices>
+</domain>

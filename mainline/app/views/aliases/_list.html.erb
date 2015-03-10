@@ -1,0 +1,59 @@
+<%
+#--
+#   Copyright (C) 2012-2013 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#++
+%>
+
+<%= link_to("Add new", new_user_alias_path(user), :class => 'btn btn-primary pull-right')  %>
+
+<h2 class="gts-legend">Manage your email aliases</h2>
+
+<p>
+  Aliases are used to associate your commits with your Gitorious user  account.
+  Useful if you commit under more than one email. Any communication sent to you from
+  Gitorious will still go to your primary email only (<strong><%= h(@user.email) %></strong>)
+</p>
+
+<table class="table table-striped">
+  <thead>
+    <th>Added</th>
+    <th>Address</th>
+    <th>Confirmed?</th>
+    <th></th>
+  </thead>
+  <tbody class="gts-tbody-actions">
+    <% emails.each do |email| %>
+      <tr>
+        <td>
+          <%= l(email.created_at, :format => :short) %>
+        </td>
+        <td>
+          <%= h(email.address) %>
+        </td>
+        <td>
+          <%= image_tag(email.confirmed? ? "silk/tick.png" : "silk/cross.png",
+                        :title => email.confirmed? ? 'Confirmed' : 'Not confirmed') %>
+        </td>
+        <td>
+          <%= link_to(t("views.common.delete"), user_alias_path(user, email),
+                      :method => :delete,
+                      :confirm => t("views.common.confirm"),
+                      :class => 'btn btn-danger') %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

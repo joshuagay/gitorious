@@ -1,0 +1,69 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General public License as published by
+  #   the Free Software Foundation, either version 3 of the Pcense, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General <p></p>ublic License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<fieldset>
+  <div class="control-group">
+    <%= form.label :login, t(:login, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
+    <div class="controls">
+      <%= form.text_field :login, :class => "input-xlarge" -%>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= form.label :email, t(:email, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
+    <div class="controls">
+      <%= form.text_field :email, :class => "input-xlarge" -%>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= form.label :password, t(:password, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
+    <div class="controls">
+      <%= form.password_field :password, :class => "input-xlarge" -%>
+    </div>
+  </div>
+  <div class="control-group">
+    <%= form.label :password_confirmation, t(:password_confirmation, :scope => "activerecord.attributes.user"), :class => "control-label" -%>
+    <div class="controls">
+      <%= form.password_field :password_confirmation, :class => "input-xlarge" -%>
+    </div>
+  </div>
+  <% if Gitorious.dot_org? %>
+    <div class="control-group">
+      <div class="controls">
+        <label class="checkbox">
+          <%= form.check_box :terms_of_use  -%>
+          I accept the <%= render :partial => "licenses/tos_link" -%>
+        </label>
+      </div>
+    </div>
+  <% else %>
+    <%= form.hidden_field :terms_of_use, { value: '1' } %>
+  <% end %>
+  <div class="control-group">
+    <div class="controls">
+      <label class="checkbox">
+        <%= form.check_box :is_admin, {}, "1", "0" -%>
+        <%= t("views.users.is_admin") -%>
+      </label>
+    </div>
+  </div>
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit"><%= t("views.common.create") %></button>
+  </div>
+</fieldset>

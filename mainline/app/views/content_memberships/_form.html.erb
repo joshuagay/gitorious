@@ -1,0 +1,50 @@
+<%
+  #--
+  #   Copyright (C) 2012-2014 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<%= error_messages(content) -%>
+<div class="tabbable">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#add-private-user" data-toggle="tab"><%= t("views.collaborators.add_user") -%></a></li>
+    <li><a href="#add-private-group" data-toggle="tab"><%= t("views.collaborators.add_team") -%></a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="add-private-user">
+      <%= form_for(membership, :url => memberships_path(content),
+        :html => { :class => "form-inline" }) do |f| %>
+        <%= text_field(:user, :login, {
+                :id => "user_login_autocomplete",
+                :class => "input-small",
+                :placeholder => t("views.collaborators.user_login")
+              }) %>
+        <%= f.submit(t("views.collaborators.btn_add_as_collaborator"), :class => "btn btn-primary") %>
+      <% end %>
+    </div>
+    <div class="tab-pane" id="add-private-group">
+      <%= form_for(membership, :url => memberships_path(content),
+        :html => { :class => "form-inline" }) do |f| %>
+        <%= text_field(:group, :name, {
+                :id => "group_name_autocomplete",
+                :class => "input-small",
+                :placeholder => t("views.collaborators.group_name")
+              }) -%>
+        <%= f.submit(t("views.collaborators.btn_add_as_collaborator"), :class => "btn btn-primary") %>
+        <p class="muted"><br><%= t("views.collaborators.add_team_note_html") -%></p>
+      <% end %>
+    </div>
+  </div>
+</div>

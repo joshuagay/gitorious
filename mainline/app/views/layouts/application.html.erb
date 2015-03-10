@@ -1,0 +1,120 @@
+<%
+  #--
+  #   Copyright (C) 2012-2014 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+-%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title><%= [@title, current_site.title].compact.join(' - ') %></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <%= stylesheet_link_tag "application" if defined? stylesheet_link_tag %>
+    <% Gitorious::View.theme_stylesheets(current_site).each do |stylesheet| %>
+      <link href="<%= stylesheet %>" rel="stylesheet" type="text/css">
+    <% end %>
+    <%= content_for(:head) %>
+    <% if defined?(session) && session[:_csrf_token] %>
+      <meta class="csrf-param" content="authenticity_token" name="csrf-param" data-gts-env-csrf-param="authenticity_token">
+      <meta class="csrf-token" content="<%= session[:_csrf_token] %>" name="csrf-token" data-gts-env-csrf-token="<%= session[:_csrf_token] %>">
+    <% end %>
+    <%= favicon.html_safe %>
+    <%= partial "layouts/extra_html_head_data" %>
+  </head>
+  <body<%= " class=\"#{@body_class}\"".html_safe if @body_class %>>
+    <% if !defined?(main_app) %>
+      <% @main_app = self %>
+    <% else %>
+      <% @main_app = main_app %>
+    <% end %>
+    <div class="page-wrapper">
+      <div class="page-content">
+        <div class="gts-masthead navbar">
+          <div class="navbar-inner">
+            <div class="container">
+              <%= system_messages %>
+              <a href="<%= @main_app.root_path %>" class="gts-logo"><%= site_logo(current_site).html_safe %></a>
+              <ul class="nav">
+                <li>
+                  <a href="<%= @main_app.activity_path %>">Activities</a>
+                </li>
+                <li>
+                  <a href="<%= @main_app.projects_path %>">Projects</a>
+                </li>
+                <li>
+                  <a href="<%= @main_app.groups_path %>">Teams</a>
+                </li>
+                <% if current_user && current_user.is_admin? %>
+                  <li>
+                    <a href="<%= @main_app.admin_users_path %>">Users</a>
+                  </li>
+                <% end %>
+                <li>
+                  <a href="<%= @main_app.about_path %>">About</a>
+                </li>
+              </ul>
+              <div class="pull-right">
+                <form action="<%= @main_app.search_path %>" class="navbar-search pull-left" method="get">
+                  <input type="search" placeholder="Search" class="search-query span2" name="q">
+                </form>
+                <div class="pull-right btn-group login_button">
+                  <a href="<%= @main_app.login_path %>" class="btn btn-inverse">
+                    <i class="icon-user icon-white"></i> Sign in
+                  </a>
+                </div>
+              </div>
+            </div>
+            <%= flash_messages %>
+          </div>
+        </div>
+        <% if defined?(repository_meta) %>
+          <%= repo_header(repository_meta, {
+                  :current_user => current_user,
+                  :ref => ref,
+                  :active => :source,
+                  :header_level => 2
+                }) %>
+        <% end %>
+        <% if defined?(content_for?) %>
+          <%= content_for?(:content) ? yield(:content) : yield %>
+        <% else %>
+          <%= yield %>
+        <% end %>
+      </div>
+    </div>
+    <div class="footer">
+      <%= partial("layouts/footer", :current_site => current_site) %>
+    </div>
+    <script data-gts-env-user-view-state-path="<%= @main_app.view_state_users_path(:format => "json") %>"></script>
+    <% repo = defined?(repository_meta) ? repository_meta : (defined?(repository) ? repository : nil) %>
+    <% if repo %>
+      <script
+        data-gts-env-repository-refs-url="<%= repository_refs_path(:project_id => repo.project, :repository_id => repo) %>"
+        data-gts-env-commit-url-template="<%= project_repository_commit_path(repo.project, repo, "%oid%").sub("%oid%", "\#{oid}") %>">
+      </script>
+    <% end %>
+    <% Gitorious::View.theme_javascripts(current_site).each do |javascript| %>
+      <script src="<%= javascript %>"></script>
+    <% end %>
+    <%= javascript_include_tag "application" if defined? javascript_include_tag %>
+    <%= content_for(:javascripts) %>
+    <%= content_for(:footer) %>
+    <script>
+      $(function() { $('.alert').append('<a class="close" data-dismiss="alert" href="#">&times;</a>').alert(); });
+      gts.enableJS(document.documentElement);
+    </script>
+  </body>
+</html>

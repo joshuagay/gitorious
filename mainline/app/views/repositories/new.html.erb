@@ -1,0 +1,61 @@
+<%
+  #--
+  #   Copyright (C) 2013 Gitorious AS
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+%>
+
+<% @page_title = "Add new repository to #{h(project.title)}" %>
+
+<%= render "projects/header", :project => project, :active => :admin  %>
+
+<div class="container" id="gts-pjax-container">
+  <%= error_messages(repository) -%>
+  <%= form_for(repository, :as => :repository, :url => project_repositories_url(repository.project), :html => { :class => "form-horizontal" }) do |f| -%>
+    <fieldset>
+      <legend>Create a new repository</legend>
+      <p class="well">
+        The new <%= link_to(h(project.title), project) %> repository will be
+        owned by <%= link_to h(repository.owner.title), repository.owner -%>
+        (a <%= repository.owner.class.human_name.downcase -%>).
+      </p>
+      <div class="control-group">
+        <%= f.label :name, "Name", :class => "control-label" -%>
+        <div class="controls">
+          <%= f.text_field :name, :class => "input-xlarge" -%>
+        </div>
+      </div>
+      <%= live_md_preview_textarea(f, :description, "Description") %>
+      <% if Gitorious.private_repositories? %>
+        <div class="control-group">
+          <label for="private" class="control-label">Private repository?</label>
+          <div class="controls">
+            <label class="checkbox">
+              <input type="checkbox" value="1" name="private" id="private"<%= " checked" if params[:private] %>>
+            </label>
+            <p class="help-block">
+              Private repositories can only be accessed by you and
+              individuals/groups you grant access to.
+            </p>
+          </div>
+        </div>
+      <% end %>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">Create repository</button>
+        <span class="cancel"><%= link_to 'Cancel', project_path(project) %></span>
+      </div>
+    </fieldset>
+  <% end %>
+</div>

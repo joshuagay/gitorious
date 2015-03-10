@@ -1,0 +1,51 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 Patrick Aljord <patcito@gmail.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+<% scope = "activerecord.attributes.project" %>
+
+<%= form.input :title, :label => t(:title, :scope => scope) %>
+<% if edit_slug %>
+  <%= form.input :slug, :label => t(:slug, :scope => scope) %>
+<% end %>
+<% if form.object.new_record? %>
+  <%= form.owner_input_block :owner, t("views.projects.owner"), current_user %>
+<% end %>
+<%= form.textarea_md_preview(:description, 'Description') %>
+<%= form.input(:tag_list, :label => t(:tag_list, :scope => scope), :hint => t(:tag_list_help, :scope => scope)) %>
+<%= form.select_block(:license, license_label(scope),
+               project_license_choices(:selected => default_license(project)).html_safe,
+               { :help => "<div id=\"license-details\"></div>" },
+               :class => "gts-option-details", :"data-target" => "license-details"
+              ) %>
+<% if edit_urls %>
+  <%= form.input :home_url, :label => t(:home_url, :scope => scope) %>
+  <%= form.input :mailinglist_url, :label => t(:mailinglist_url, :scope => scope) %>
+  <%= form.input :bugtracker_url, :label => t(:bugtracker_url, :scope => scope) %>
+<% end %>
+<%= form.input :wiki_enabled, :as => :boolean, :label => t(:wiki_enabled, :scope => scope) %>
+<% if form.object.persisted? %>
+  <%= form.input(:wiki_permissions, :label => t(:wiki_permissions, :scope => scope), :collection => wiki_permission_choices) %>
+<% end %>
+<% if form.object.new_record? && Gitorious.private_repositories? %>
+  <%= form.private_toggle(params) %>
+<% end %>

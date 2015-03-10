@@ -1,0 +1,48 @@
+* Munin plugins for Gitorious
+  This gem provides a set of Munin plugins to be used on a Gitorious
+  server. Each plugin is provided as a binary that can be symlinked
+  into =/etc/munin/plugins= on your server.
+** Usage
+   This gem ships with a single binary, =gitorious-munin-plugin=,
+   which is installed as a Gem binary. Run this command "normally"
+   with the =-h= switch to see options (ie. =gitorious-munin-plugin -h=).
+
+
+   Run it with the =-s= option to list which plugins are included with
+   the gem, and whether they have been installed as Munin plugins on
+   your machine.
+
+   In order to install one of these plugins, run the script with the
+   =-i PLUGIN= switch to install =PLUGIN=, and use the =-u= switch to
+   uninstall.
+
+** How does it work?
+   This is actually a trick I've meant to use since the first time I
+   saw it used. When the binary (=gitorious-munin-plugin=) is run, I
+   check what it was called as - the =$0= variable. If the script was
+   called by its real name (=__FILE__=) we display the usage
+   instructions (along with a list of known plugins and whether they
+   have been installed or not), otherwise we attempt to load a plugin
+   from =lib/gitorious-munin-plugins/plugins= in the gem. So to not
+   have to pollute your server with a number of binaries, potentially
+   conflicting with other binaries, we supply a single binary and call
+   it by many names. Time will show whether this is a good idea or
+   not...
+
+** Gitorious configuration
+   This plugin needs to know how to connect to your Gitorious
+   database, and it will need the file =/etc/gitorious.conf= to be
+   present on your server. This file should be in a format that makes
+   it possible to source it from shell scripts, and it needs to
+   contain at least:
+
+#+BEGIN_EXAMPLE
+GITORIOUS_ROOT=/path/to/gitorious
+#+END_EXAMPLE
+
+   pointing to where Gitorious is installed. You may also supply a
+   =RAILS_ENV= in there to not use the default of =production=.
+
+   You can also configure the scripts through environment variables,
+   which may be useful for development, e.g.:
+   `env GITORIOUS_HOME=/var/www/gitorious RAILS_ENV=production gitorious-munin-plugins --try gitorious_repositories`

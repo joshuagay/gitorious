@@ -1,0 +1,11 @@
+{
+    "id": "https://api.gitorious.org/schema/ssh-key-payload#",
+    "$schema": "http://json-schema.org/schema#",
+    "title": "SSH key payload",
+    "description": "New SSH key to upload for user",
+    "type": "object",
+    "properties": {
+        "key": { "type": "string" }
+    },
+    "required": ["key"]
+}

@@ -1,0 +1,58 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies)
+  #   Copyright (C) 2009 Fabio Akita <fabio.akita@gmail.com>
+  #   Copyright (C) 2008 David A. Cuadrado <krawek@gmail.com>
+  #   Copyright (C) 2008 Tor Arne Vestbø <tavestbo@trolltech.com>
+  #   Copyright (C) 2007, 2008 Johan Sørensen <johan@johansorensen.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+%>
+
+<div class="row-fluid">
+  <div class="span8">
+    <h2 class="gts-legend">
+      <%= t("views.events.title", :name => h(project.name)) %>
+      <div class="pull-right">
+        <%= feed_icon atom_auto_discovery_url %>
+      </div>
+    </h2>
+    <%= render 'events/events', {
+          :events       => events,
+          :current_page => current_page,
+          :total_pages  => total_pages
+        } %>
+  </div>
+  <div class="span4">
+    <%= render "repositories/repositories", {
+          :repositories => mainlines,
+          :hint => "This project does not yet have any repositories.",
+          :heading => "Repositories",
+          :footer => '<div class="pull-box-header-action">' +
+          mainlines_sorting.render_widget +
+          "<a class=\"btn btn-primary\" href=\"#{new_project_repository_path(project)}\">" +
+          "<i class=\"icon-plus-sign icon-white\"></i> Add new</a></div>"
+        } %>
+    <%= render "repositories/repositories", {
+          :repositories => group_clones,
+          :heading => "Team clones"
+        } %>
+    <%= render "repositories/repositories", {
+          :repositories => user_clones,
+          :heading => "User clones"
+        } %>
+  </div>
+</div>

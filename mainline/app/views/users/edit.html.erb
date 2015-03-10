@@ -1,0 +1,53 @@
+<%
+  #--
+  #   Copyright (C) 2012-2013 Gitorious AS
+  #   Copyright (C) 2009 Tor Arne Vestbø <torarnv@gmail.com>
+  #   Copyright (C) 2009 Johan Sørensen <johan@johansorensen.com>
+  #   Copyright (C) 2009 Marius Mathiesen <marius.mathiesen@gmail.com>
+  #
+  #   This program is free software: you can redistribute it and/or modify
+  #   it under the terms of the GNU Affero General Public License as published by
+  #   the Free Software Foundation, either version 3 of the License, or
+  #   (at your option) any later version.
+  #
+  #   This program is distributed in the hope that it will be useful,
+  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  #   GNU Affero General Public License for more details.
+  #
+  #   You should have received a copy of the GNU Affero General Public License
+  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  #++
+  %>
+
+<%= site_header do %>
+  <h2>Settings</h2>
+  <%= user_edit_tabbable :active => active_tab %>
+<% end %>
+
+<div class="container">
+  <div class="user-edit-container">
+    <%= tab_pane(active_tab.underscore.to_sym, :active => true) do %>
+      <%= render "users/edit/#{active_tab.underscore}", :user => user %>
+    <% end %>
+  </div>
+</div>
+
+<% content_for(:javascripts) do %>
+  <script type="text/javascript">
+    $(function() {
+        var active = $('.nav[data-active]').data('active');
+        var $nav   = $('a[data-target="#'+active+'"]');
+
+        $nav.tab('show');
+
+        if ($.support.pjax) {
+          $('.nav').pjax('a', '.tab-pane');
+        } else {
+          $('.tabbable .nav a').click(function() {
+            window.location = $(this).attr('href');
+          });
+        }
+    });
+  </script>
+<% end %>

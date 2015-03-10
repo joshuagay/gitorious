@@ -1,0 +1,67 @@
+#!/usr/bin/env ruby
+#
+#   Copyright (C) 2013 Gitorious AS
+#
+#   This program is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU Affero General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU Affero General Public License for more details.
+#
+#   You should have received a copy of the GNU Affero General Public License
+#   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+require File.expand_path(File.dirname(__FILE__) + "/daemon")
+
+class ResqueDaemon
+  include Gitoriousd::Daemon
+
+  def initialize(name)
+    @name = name
+  end
+
+  def run_resque
+    pid = fork do
+      exec "#{ENV['GITORIOUS_HOME']}/bin/rake resque:work QUEUE=*"
+    end
+    return pid
+  end
+
+  def run!
+    daemonize_app do
+      @resque_pid = run_resque
+      write_to_log_file "Resque running with pid #{@resque_pid}, controlled by #{Process.pid}"
+      Signal.trap(:QUIT) do
+        Process.kill(:QUIT, @resque_pid)
+        pid, status = Process.waitpid2(@resque_pid)
+        write_to_log_file "Resque with PID #{@resque_pid} killed, status was #{status.exitstatus}"
+        remove_pidfile
+        exit status.exitstatus
+      end
+      Signal.trap(:HUP) {
+        write_to_log_file "Restarting Resque with PID #{@resque_pid}"
+        Process.kill(:QUIT, @resque_pid)
+        Process.waitpid(@resque_pid)
+        write_to_log_file "Old Resque worker dead, will re-spawn"
+        @resque_pid = run_resque
+        write_to_log_file "Resque respawned, running with pid #{@resque_pid}"
+      }
+      Signal.trap(:CHLD) {
+        write_to_log_file "Our child just died, exiting."
+        Process.wait(@resque_pid)
+        remove_pidfile
+        exit 1
+      }
+      loop {
+        sleep 1
+      }
+    end
+  end
+end
+
+daemon = ResqueDaemon.new("resque")
+daemon.run!

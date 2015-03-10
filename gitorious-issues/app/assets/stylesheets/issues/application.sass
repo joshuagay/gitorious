@@ -1,0 +1,237 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require_tree .
+ */
+
+/* gitorious.css overrides */
+.form-horizontal .input-expanded
+  width: 99%
+
+.gts-help .table
+  width: auto
+
+.form-horizontal legend + p
+  margin: -20px 0 27px
+
+.form-horizontal .form-actions-left
+  padding-left: 19px
+
+.form-horizontal textarea
+  width: 99%
+  height: 150px
+
+.pull-box-container
+  &.closed
+    border: none
+
+    .pull-box-header
+      border-radius: 4px
+      border: 1px solid #e1e1e8
+
+    .pull-box-content
+      > .btn-group
+        .btn
+          border-radius: 0 4px 4px 0
+
+    .gts-content
+      display: none
+
+/* ~ gitorious.css overrides */
+
+/* globally reusable stuff */
+
+.btn + .dropdown
+  margin-right: 10px
+
+.gts-well
+  background-color: #fbfbfb
+  border: 1px solid #e5e5e5
+  margin-bottom: 20px
+  min-height: 20px
+  padding: 19px
+
+.gts-content
+  padding: 20px
+
+.gts-color-box
+  display: block
+  width: 16px
+  height: 16px
+  padding: 4px
+  text-indent: -1000px
+  border-radius: 2px
+
+/* ~ globally reusable stuff */
+
+.form-horizontal
+  .gts-issue-sidebar-fields
+
+    select
+      width: 60%
+
+    .autocomplete-widget
+      position: relative
+
+      .ui-autocomplete
+        margin: 30px 0 0 34%
+        width: 60%
+
+      .issue-assignees, .issue-labels
+        list-style: none
+        margin: 10px 0 0 34%
+
+        li
+          display: inline-block
+          margin: 5px 5px 0 0
+
+          &.last-child
+            margin-right: 0
+
+    .control-label
+      width: 30%
+      margin-right: 10px
+
+    .controls
+      margin-left: 0
+
+  .gts-textarea-expandable
+    line-height: 18px
+    height: 18px
+
+.gts-comment
+  background: #fff
+  border: 1px solid #ddd
+
+  .gts-comment-header
+    padding-bottom: 10px
+    border-bottom: 1px solid #f4f4f4
+
+  .gts-comment-body
+    border: none
+    background: #fff
+
+.gts-pullbox-content-meta
+  overflow: hidden
+  padding: 10px
+  background-color: #fdfdfd
+
+  &.gts-pullbox-content-meta-top
+    border-bottom: 1px solid #f4f4f4
+
+  &.gts-pullbox-content-meta-bottom
+    border-top: 1px solid #f4f4f4
+
+$active-issue-color: #74a7d6
+
+.pull-box-container
+  &.active-issue-query
+    border-color: $active-issue-color
+
+    .pull-box-header-buttons
+      .btn
+        border-color: $active-issue-color
+        background-color: #95c8f7
+
+    .pull-box-header
+      background-color: #95c8f7
+      border-color: $active-issue-color
+
+label.btn-label, button.btn-label
+  color: #fff
+
+  &.btn-inactive
+    opacity: .35
+
+  &:hover
+    opacity: 100
+
+  i
+    margin: 0
+
+  input[type="checkbox"]
+    display: none
+
+.gts-issue-filters
+  margin-bottom: 0
+
+  .gts-filter-buttons
+    margin: -5px 0
+    list-style: none
+
+    li
+      display: inline-block
+      margin: 5px 5px 0 0
+
+.gts-filter-buttons, .issue-states
+  label
+    color: #000
+
+.gts-saved-issue-queries
+  h4
+    color: #333
+    margin-bottom: 10px
+
+  ul
+    margin: 0
+    list-style: none
+
+.gts-project-issues
+  list-style: none
+  clear: both
+  margin: 20px 0
+
+  >
+    li:first-child
+      padding-top: 0
+
+    li:last-child
+      padding-bottom: 0
+
+    li
+      padding: 15px 0
+      line-height: 22px
+
+    li + li
+      border-top: 1px solid #eee
+
+  .gts-issue-actions
+    .dropdown-toggle .icon
+      opacity: 0.6
+
+  .gts-issue-body
+    .label
+      font-size: 14px
+
+    padding: 10px 0
+    font-size: 16px
+
+  .gts-issue-footer
+    ul
+      margin: 0
+      list-style: none
+
+      li
+        display: inline-block
+
+      li + li
+        margin-left: 10px
+
+  .gts-avatar
+    margin-left: 0
+
+  .gts-issue-labels
+    ul
+      list-style: none
+      margin: 0
+
+      li
+        display: inline-block

@@ -1,0 +1,7 @@
+<%= simple_form_for([query.project, :issue, query.build], :html => { :class => 'form-inline gts-new-issue-query' }) do |f| %>
+  <%= f.input_field :name, :placeholder => 'Name your query' %>
+  <%= f.label :public if admin?(current_user, query.project) %>
+  <%= f.input_field :public  %>
+  <%= f.hidden_field :data %>
+  <%= f.submit 'Save', :class => 'btn btn-primary' %>
+<% end %>
